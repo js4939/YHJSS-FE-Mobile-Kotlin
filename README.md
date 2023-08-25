@@ -1,6 +1,10 @@
 # FrontEnd
 졸업프로젝트 [여행지쏙쏙]의 프론트엔드 리포지토리입니다.  
 
+# Project Version
+Android Studio Electric Eel(2022.1.1)
+API 33 Tiramisu
+
 # Commit Message Convention
 ### 1. 기본 구조
 > 제목 (Type: Subject)
