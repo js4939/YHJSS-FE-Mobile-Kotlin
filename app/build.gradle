@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.yeohangjissokssok"
-        minSdk 33
+        minSdk 30
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -30,6 +30,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -41,4 +44,12 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    // 네이버 지도 SDK
+    implementation("com.naver.maps:map-sdk:3.16.2")
+
+    //위치권한 요청
+    implementation 'io.github.ParkSangGwon:tedpermission-rx3:3.3.0'
+
 }

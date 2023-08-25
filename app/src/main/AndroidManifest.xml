@@ -12,7 +12,25 @@
         android:theme="@style/Theme.YeoHangJiSsokSsok"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.ResultWithFilterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ApplyFilterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RecommendListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PlaceListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
