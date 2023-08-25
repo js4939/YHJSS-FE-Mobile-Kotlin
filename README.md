@@ -3,7 +3,7 @@
 
 # Project Version
 - Android Studio Electric Eel(2022.1.1)
-- API 33 Tiramisu
+- API 33 Tiramisu(Minimum 30)
 
 # Commit Message Convention
 ### 1. 기본 구조
