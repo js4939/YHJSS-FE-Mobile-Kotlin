@@ -8,6 +8,7 @@
     <color name="iconNotSelected">#FFFCFFF4</color>
     <color name="tabBarSelected">#FFA0C49D</color>
     <color name="topTextColor">#FF467933</color>
+    <color name="editTextColor">#FFE1ECC8</color>
     <color name="categoryNotSelected">#FFE1ECC8</color>
     <color name="positiveColor">#FF00FF57</color>
     <color name="middleColor">#FFFAFF00</color>
