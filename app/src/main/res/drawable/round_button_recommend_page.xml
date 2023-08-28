@@ -9,7 +9,7 @@
                 android:angle="90" />
             <stroke
                 android:width="2dp"
-                android:color="@color/tabBarSelected"
+                android:color="@color/tabBarSelected"/>
             <corners
                 android:radius="20dp" />
             <padding
