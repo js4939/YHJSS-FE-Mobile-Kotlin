@@ -5,6 +5,10 @@
 - Android Studio Electric Eel(2022.1.1)
 - API 33 Tiramisu(Minimum 30)
 
+# Brnach Naming Convention
+> 브랜치를 팔 때에는 자기 이름으로 네이밍 해주세요. 이름만 들어가면 ok입니다.
+> ex) Mingyu_Choi, zzzzzzi_su, yj_o
+
 # Commit Message Convention
 ### 1. 기본 구조
 > 제목 (Type: Subject)
