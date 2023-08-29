@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="30sp"
+    android:layout_marginBottom="30sp"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp"
-    android:layout_marginTop="30sp"
-    android:layout_marginBottom="30sp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
