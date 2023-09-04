@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="30sp"
+    android:layout_marginBottom="30sp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_rv_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서울 송파 석촌호수"
+        android:layout_marginLeft="20dp"
+        android:textSize="20sp"
+        android:textColor="@color/textColor"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/img_rv_plus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="330dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/baseline_add_circle_24" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
