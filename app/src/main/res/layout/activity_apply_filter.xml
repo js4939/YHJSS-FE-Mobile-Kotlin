@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:id="@+id/applyfilter_page"
-    android:clipToOutline="true"
-    android:background="@color/backgroundColor"
     android:orientation="vertical"
+    tools:context=".fragment.AreaFragment">
 
-    tools:context=".activity.ApplyFilterActivity">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="20sp"
         android:layout_marginTop="20dp"
         tools:ignore="MissingConstraints">
 
@@ -41,6 +39,7 @@
             android:textAlignment="center"
             android:textSize="22sp"
             tools:ignore="MissingConstraints" />
+
     </LinearLayout>
 
     <TextView
@@ -50,135 +49,147 @@
         android:layout_gravity="center"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center_horizontal|center_vertical"
         android:text="리뷰 분석을 자세히 \n 보고 싶은 달을 골라주세요."
         android:textColor="@color/textColor"
-        android:textSize="23sp"
+        android:textSize="20sp"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="58dp"
         tools:layout_editor_absoluteY="113dp" />
+    />
 
     <GridLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_columnWeight="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="15dp"
         android:columnCount="3"
-        android:gravity="center_horizontal|center_vertical"
-        android:rowCount="4"
         android:orientation="horizontal"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="286dp"
-        >
+        android:rowCount="4"
+        tools:ignore="MissingConstraints">
 
         <android.widget.Button
             android:id="@+id/btn1"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="1월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn2"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="2월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn3"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="3월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn4"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="4월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/bnt5"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="5월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn6"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="6월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn7"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="7월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/bnt8"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="8월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn9"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="9월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/btn10"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="10월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/bnt11"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="11월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
         <android.widget.Button
             android:id="@+id/bnt12"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/round_button"
             android:text="12월"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="20dp" />
     </GridLayout>
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
