@@ -24,11 +24,12 @@
         android:id="@+id/img_rv_plus"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="330dp"
+        android:layout_marginLeft="280dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_add_circle_24" />
+        android:src="@drawable/baseline_add_circle_24"
+         />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
