@@ -34,6 +34,6 @@ class ApplyFilterActivity : AppCompatActivity() {
         intent.putExtra("selectedMonth", monthText)
         startActivity(intent)
 
-        Log.d("select month ", monthText)
+        //Log.d("select month ", monthText)
     }
 }
