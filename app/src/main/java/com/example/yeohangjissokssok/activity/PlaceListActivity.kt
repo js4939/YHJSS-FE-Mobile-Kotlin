@@ -132,9 +132,10 @@ class PlaceListActivity : AppCompatActivity() {
             val intent = Intent(this@PlaceListActivity, ResultActivity::class.java)
             placeAdapter.itemClicklistener = object:PlaceAdapter.OnItemClickListener{
                 override fun OnItemClick(position: Int) {
-                    // 다음 페이지의 http 통신을 위해 id 넘겨줘야 함
+                    // 다음 페이지의 http 통신을 위해 여행지 정보 넘겨줘야 함
                     intent.putExtra("id", placeAdapter.datas[position].id)
                     intent.putExtra("name", placeAdapter.datas[position].name)
+                    intent.putExtra("region", placeAdapter.datas[position].region)
                     intent.putExtra("page", "placeList")
                     startActivity(intent)
                 }
