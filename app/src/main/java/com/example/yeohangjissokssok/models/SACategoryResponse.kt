@@ -3,10 +3,10 @@ package com.example.yeohangjissokssok.models
 import com.google.gson.annotations.SerializedName
 
 data class SACategoryResponse(
-    val id: Long,
-    val name: String,
+    val placeId: Long,
     val region: String,
-    val positiveNumber: Int,
-    val totalNumber: Int,
-    val proportion: Int
+    val name: String,
+    val positiveNumber: Long,
+    val totalNumber: Long,
+    val proportion: Double
 ): java.io.Serializable
