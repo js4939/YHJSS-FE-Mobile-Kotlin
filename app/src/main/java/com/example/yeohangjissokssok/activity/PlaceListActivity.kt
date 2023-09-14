@@ -29,7 +29,7 @@ class PlaceListActivity : AppCompatActivity() {
     // 바인딩 객체 선언
     private lateinit var binding: ActivityPlaceListBinding
 
-    val datas = mutableListOf<MainData>()
+    val datas = ArrayList<PlaceResponse>()
 
     var id = 3
     var name = "name"
@@ -91,7 +91,6 @@ class PlaceListActivity : AppCompatActivity() {
 
             })
         }
-
     }
 
 
@@ -101,18 +100,19 @@ class PlaceListActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        placeAdapter = PlaceAdapter(this)
+        placeAdapter = PlaceAdapter(this.datas)
         binding.rvPlace.adapter = placeAdapter
 
         initRecycler()
+        initClickEvent()
         getPlaceByName("서울")
     }
 
     private fun initRecycler() {
         // 데이터 추가
-        datas.add(MainData(tv_rv_place = "서울 송파 석촌호수", img = R.drawable.baseline_add_circle_24))
-        datas.add(MainData(tv_rv_place = "서울 송파 롯데월드", img = R.drawable.baseline_add_circle_24))
-        datas.add(MainData(tv_rv_place = "서울 송파 잠실야구경기장", img = R.drawable.baseline_add_circle_24))
+        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
+        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
+        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
 
         // 어댑터에 데이터 설정
         placeAdapter.datas = datas
@@ -120,6 +120,29 @@ class PlaceListActivity : AppCompatActivity() {
         // RecyclerView를 갱신
         placeAdapter.notifyDataSetChanged()
     }
+    private fun initClickEvent() {
+        binding.apply{
+            goBackBtn.setOnClickListener {
+                // 뒤로가기 버튼 클릭 시 이벤트
+                startActivity(Intent(this@PlaceListActivity, ResultActivity::class.java))
+            }
+
+            // adapter에 클릭리스너 부착
+            // 여행지 클릭 시 이벤트
+            val intent = Intent(this@PlaceListActivity, ResultActivity::class.java)
+            placeAdapter.itemClicklistener = object:PlaceAdapter.OnItemClickListener{
+                override fun OnItemClick(position: Int) {
+                    // 다음 페이지의 http 통신을 위해 여행지 정보 넘겨줘야 함
+                    intent.putExtra("id", placeAdapter.datas[position].id)
+                    intent.putExtra("name", placeAdapter.datas[position].name)
+                    intent.putExtra("region", placeAdapter.datas[position].region)
+                    intent.putExtra("page", "placeList")
+                    startActivity(intent)
+                }
+            }
+        }
+    }
+
 }
 
 

@@ -1,10 +1,8 @@
 package com.example.yeohangjissokssok.activity
 
-import com.google.gson.annotations.SerializedName
-
 data class PlaceResponse(
-    val id: Int,
+    val id: Long,
     val name: String,
     val region: String,
-    val address: String
+    val address: String?
 ): java.io.Serializable

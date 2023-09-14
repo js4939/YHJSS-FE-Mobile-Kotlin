@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:text="서울 송파 석촌호수"
         android:layout_marginLeft="20dp"
+        android:padding="15dp"
         android:textSize="20sp"
         android:textColor="@color/textColor"
         app:layout_constraintTop_toTopOf="parent"
