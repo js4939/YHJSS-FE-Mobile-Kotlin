@@ -1,15 +1,10 @@
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.yeohangjissokssok.activity.MainData
 import com.example.yeohangjissokssok.activity.PlaceResponse
 import com.example.yeohangjissokssok.databinding.PlaceRecyclerBinding
 
-class PlaceAdapter(var datas:ArrayList<PlaceResponse>)
+class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
     : RecyclerView.Adapter<PlaceAdapter.ViewHolder>(){
 
     interface OnItemClickListener{
