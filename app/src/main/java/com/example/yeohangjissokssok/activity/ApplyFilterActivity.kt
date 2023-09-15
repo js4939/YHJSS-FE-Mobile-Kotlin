@@ -31,9 +31,12 @@ class ApplyFilterActivity : AppCompatActivity() {
     private fun onMonthButtonClick(monthText: String) {
         // 선택된 월을 다음 화면으로 전달하고 페이지 변경
         val intent = Intent(this, ResultWithFilterActivity::class.java)
-        intent.putExtra("selectedMonth", monthText)
+
+        // 서버 통신 위해 "월" 문자는 전달하지 않음
+        val substring = monthText.substring(0, monthText.length - 1)
+        intent.putExtra("selectedMonth", substring)
         startActivity(intent)
 
-        //Log.d("select month ", monthText)
+        Log.d("select month ", substring)
     }
 }

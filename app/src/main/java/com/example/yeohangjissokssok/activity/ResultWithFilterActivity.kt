@@ -19,10 +19,10 @@ class ResultWithFilterActivity : AppCompatActivity() {
 
         // Intent로 monthText 값 추출
         val selectedMonth = intent.getStringExtra("selectedMonth")
-        Log.d("select month ", selectedMonth.toString())
+        //Log.d("select month ", selectedMonth.toString())
 
         val selectedTextTextView = findViewById<TextView>(R.id.selectedFilter)
-        selectedTextTextView.text = "$selectedMonth"
+        selectedTextTextView.text = "$selectedMonth"+"월"
 
 
 
