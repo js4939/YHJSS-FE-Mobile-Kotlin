@@ -5,6 +5,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
+import androidx.core.content.ContextCompat.startActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.ActivityPlaceListBinding
 import com.google.gson.Gson
@@ -25,67 +31,15 @@ class PlaceListActivity : AppCompatActivity() {
 
     val datas = ArrayList<PlaceResponse>()
 
+
     var id = 3
     var name = "name"
     var region = "region"
     var address = "address"
     var body = ""
 
-
-    private fun getPlaceById() {
-        CoroutineScope(Dispatchers.Main).launch {
-            RetrofitBuilder.api.getPlace(1).enqueue(object : Callback<APIResponseData> {
-                override fun onResponse(
-                    call: Call<APIResponseData>, response: Response<APIResponseData>
-                ) {
-                    if (response.isSuccessful) {
-                        val temp = response.body() as APIResponseData
-                        //val type: Type = object : TypeToken<PlaceResponse>() {}.type
-                        val jsonResult = Gson().toJson(temp.data)
-                        val result: List<PlaceResponse> = GsonBuilder()
-                            .create()
-                            .fromJson(jsonResult, Array<PlaceResponse>::class.java)
-                            .toList()
-                       // val result = Gson().fromJson(jsonResult, type) as PlaceResponse
-                        Log.d("result", result.toString())
-                    }
-                }
-
-                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
-                    Log.d("test", "연결실패")
-                }
-
-            })
-        }
-
-    }
-
-    private fun getPlaceByName(input : String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            RetrofitBuilder.api.getPlaceByName(input).enqueue(object : Callback<APIResponseData> {
-                override fun onResponse(
-                    call: Call<APIResponseData>, response: Response<APIResponseData>
-                ) {
-                    if (response.isSuccessful) {
-                        val temp = response.body() as APIResponseData
-                        //val type: Type = object : TypeToken<PlaceResponse>() {}.type
-                        val jsonResult = Gson().toJson(temp.data)
-                        val result: List<PlaceResponse> = GsonBuilder()
-                            .create()
-                            .fromJson(jsonResult, Array<PlaceResponse>::class.java)
-                            .toList()
-                        // val result = Gson().fromJson(jsonResult, type) as PlaceResponse
-                        Log.d("result", result.toString())
-                    }
-                }
-
-                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
-                    Log.d("test", "연결실패")
-                }
-
-            })
-        }
-    }
+    private lateinit var searchEditText: EditText
+    private lateinit var searchBtnInplacelist: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,12 +48,33 @@ class PlaceListActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        searchEditText = findViewById(R.id.searchEditText)
+        searchBtnInplacelist = findViewById(R.id.searchBtnInplacelist)
+
         placeAdapter = PlaceAdapter(this.datas)
         binding.rvPlace.adapter = placeAdapter
 
+        // 리사이클러뷰를 처음에는 숨김(GONE) 상태로 설정
+        binding.rvPlace.visibility = View.GONE
+
+        // 리사이클러뷰 구분선 지정
+        val dividerItemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        binding.rvPlace.addItemDecoration(dividerItemDecoration)
+
+        // initRecycler() 함수 호출
         initRecycler()
+
         initClickEvent()
-        getPlaceByName("서울")
+
+        searchBtnInplacelist.setOnClickListener {
+            val searchText = searchEditText.text.toString()
+            if (searchText.isNotEmpty()) {
+                fetchPlacesByName(searchText)
+
+                // 검색 버튼 클릭 시 리사이클러뷰를 보이도록 변경
+                binding.rvPlace.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun initRecycler() {
@@ -114,6 +89,7 @@ class PlaceListActivity : AppCompatActivity() {
         // RecyclerView를 갱신
         placeAdapter.notifyDataSetChanged()
     }
+
     private fun initClickEvent() {
         binding.apply{
             goBackBtn.setOnClickListener {
@@ -137,6 +113,44 @@ class PlaceListActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchPlacesByName(searchText: String) {
+        getPlaceByName(searchText) { result ->
+            // 데이터를 가져온 후 어댑터에 데이터 설정
+            datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+            datas.addAll(result)
+            placeAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun getPlaceByName(input: String, callback: (List<PlaceResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getPlaceByName(input).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<PlaceResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<PlaceResponse>::class.java)
+                            .toList()
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+
+            })
+        }
+    }
+
+
+
 }
+
+
 
 
