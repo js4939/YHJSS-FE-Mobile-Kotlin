@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menuCalendar"
-        android:icon="@drawable/icon_location_bottomnavigation_selected_24"
-        android:checked="true"
-        android:enabled="true"
-        android:title="@string/menu_title_search_on_area" />
+        android:id="@+id/homeFragment"
+        android:title="Home"
+        android:icon="@drawable/ic_home"/>
     <item
-        android:id="@+id/menuEvent"
-        android:icon="@drawable/icon_search_bottomnavigation_selected_24"
-        android:enabled="true"
-        android:title="@string/menu_title_search_on_category" />
-
-
+        android:id="@+id/searchFragment"
+        android:title="Search"
+        android:icon="@drawable/ic_search"/>
+    <item
+        android:id="@+id/recommendFragment"
+        android:title="Recommend"
+        android:icon="@drawable/ic_recommend"/>
 </menu>

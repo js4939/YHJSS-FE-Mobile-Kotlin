@@ -6,7 +6,8 @@
     <color name="textInEditText">#FF8F8E8E</color>
     <color name="backgroundColor">#FFF9F6F2</color>
     <color name="iconNotSelected">#FFFCFFF4</color>
-    <color name="tabBarSelected">#FFA0C49D</color>
+    <color name="tabBarSelected">#0FA3E2</color>
+    <color name="tabBarNotSelected">#A0A0A0</color>
     <color name="topTextColor">#FF467933</color>
     <color name="editTextColor">#FFE1ECC8</color>
     <color name="categoryNotSelected">#FFE1ECC8</color>
