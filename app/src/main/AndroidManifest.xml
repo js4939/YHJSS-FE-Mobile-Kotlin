@@ -2,11 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:usesCleartextTraffic="true"
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,24 +12,24 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.YeoHangJiSsokSsok"
+        android:usesCleartextTraffic="true"
         tools:targetApi="33">
-
-        <!--  처음 시작하는 화면을 설정 -->
-        <!--  android:theme="@style/Theme.Design.Light.NoActionBar" 액션바 제거 -->
+<!--        <activity-->
+<!--            android:name=".NaviActivity"-->
+<!--            android:exported="false" />-->
+        <!-- 처음 시작하는 화면을 설정 -->
+        <!-- android:theme="@style/Theme.Design.Light.NoActionBar" 액션바 제거 -->
         <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/Theme.Design.Light.NoActionBar"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Design.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.MainActivity" />
-
-<!--        <activity android:name=".activity.PlaceListActivity" />-->
-
+        <activity android:name=".activity.NaviActivity" /> <!-- <activity android:name=".activity.PlaceListActivity" /> -->
         <activity
             android:name=".activity.ResultWithFilterActivity"
             android:exported="false" />
@@ -47,18 +45,6 @@
         <activity
             android:name=".activity.PlaceListActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".activity.SplashActivity"-->
-<!--            android:exported="false" />-->
-<!--        <activity-->
-<!--            android:name=".activity.MainActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
     </application>
 
 </manifest>
