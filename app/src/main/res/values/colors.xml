@@ -11,7 +11,7 @@
     <color name="topTextColor">#FF467933</color>
     <color name="editTextColor">#FFE1ECC8</color>
     <color name="categoryNotSelected">#FFE1ECC8</color>
-    <color name="positiveColor">#FF467933</color>
+    <color name="positiveColor">#0FA3E2</color>
     <color name="defaultColor">#FFBBB9B9</color>
 
 </resources>

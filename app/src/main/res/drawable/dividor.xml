@@ -4,6 +4,6 @@
         android:width="2dp"
         android:height="1dp"
     />
-    <solid android:color="@color/black" />
+    <solid android:color="@color/defaultColor" />
 
 </selector>

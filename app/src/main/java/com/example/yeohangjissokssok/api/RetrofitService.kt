@@ -25,4 +25,7 @@ interface RetrofitService {
     @GET("sa/category/{categoryCode}")
     fun getSACategoryPlace(@Path("categoryCode") categoryCode : String) : Call<APIResponseData>
 
+    @GET("reviews/{saMonthlySummaryId}/{categoryCode}")
+    fun getAllReviews(@Path("saMonthlySummaryId") saMonthlySummaryId : Long,
+                      @Path("categoryCode") categoryCode: String) : Call<APIResponseData>
 }
