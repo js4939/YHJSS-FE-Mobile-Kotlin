@@ -6,7 +6,7 @@
         android:state_selected="true"/>
 
     <item
-        android:color="@color/tabBarNotSelected"
+        android:color="@color/keywordSelected"
         android:state_checked="false"/>
 
 </selector>
