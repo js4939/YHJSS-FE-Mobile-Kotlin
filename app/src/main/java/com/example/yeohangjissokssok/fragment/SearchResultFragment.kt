@@ -119,7 +119,6 @@ class SearchResultFragment : Fragment() {
         }
     }
 
-
     private fun fetchPlacesByName(searchText: String) {
         getPlaceByName(searchText) { result ->
             // 데이터를 가져온 후 어댑터에 데이터 설정

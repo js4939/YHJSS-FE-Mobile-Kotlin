@@ -9,22 +9,36 @@ import com.example.yeohangjissokssok.databinding.SearchRecyclerBinding
 class SearchAdapter(var datas: ArrayList<String>)
     : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
-    interface OnItemClickListener {
-        fun OnItemClick(position: Int)
+    fun removeData(pos:Int){
+        // items에서 data 삭제 후, 화면 갱신 요청
+        datas.removeAt(pos)
+        notifyItemRemoved(pos)
     }
 
-    var itemClicklistener: OnItemClickListener? = null
+    fun moveData(oldPos:Int, newPos:Int){
+        var temp = datas[oldPos]
+        datas[oldPos] = datas[newPos]
+        datas[newPos] = temp
+        notifyItemMoved(oldPos, newPos)
+    }
+
+    interface OnItemClickListener {
+        fun OnItemClick(pos: Int)
+        fun DeleteClick(pos: Int)
+    }
+
+    var itemClicklistener: OnItemClickListener?=null
 
     inner class ViewHolder(val binding: SearchRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.searchText.setOnClickListener {
-                itemClicklistener?.OnItemClick(adapterPosition)
+            init {
+                binding.recentSearchText.setOnClickListener {
+                    itemClicklistener?.OnItemClick(bindingAdapterPosition)
+                }
+                binding.deleteBtn.setOnClickListener {
+                    itemClicklistener?.DeleteClick(bindingAdapterPosition)
+                }
             }
-            binding.deleteBtn.setOnClickListener {
-                itemClicklistener?.OnItemClick(adapterPosition)
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,7 +51,7 @@ class SearchAdapter(var datas: ArrayList<String>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.searchText.text = datas[position]
+        holder.binding.recentSearchText.text = datas[position]
     }
 }
 

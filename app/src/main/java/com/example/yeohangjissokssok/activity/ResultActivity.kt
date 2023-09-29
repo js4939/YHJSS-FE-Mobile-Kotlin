@@ -88,8 +88,8 @@ class ResultActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
 
         datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 1))
-        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 1))
-        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 1))
+        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 2))
+        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 0))
 
         adapter.datas = datas
 
@@ -98,8 +98,8 @@ class ResultActivity : AppCompatActivity() {
             DividerItemDecoration(this, LinearLayoutManager.VERTICAL)
         )
 
-        adapter = ReviewAdapter(ArrayList<ReviewResponse>())
-        binding.recyclerView.adapter = adapter
+        // RecyclerView 갱신
+        adapter.notifyDataSetChanged()
 
     }
 
