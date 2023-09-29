@@ -20,7 +20,7 @@
             <FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4">
+                android:layout_weight="3.6">
 
                 <ImageView
                     android:id="@+id/placeImg"
@@ -42,7 +42,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1.6"
+                android:layout_weight="1.5"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -61,7 +61,7 @@
                         android:layout_marginBottom="5dp"
                         android:text="가로수길"
                         android:textColor="@color/black"
-                        android:textSize="23sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"/>
 
                     <LinearLayout
@@ -127,8 +127,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2.5"
-                android:layout_marginTop="15dp"
+                android:layout_weight="2.3"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
                 <LinearLayout
@@ -318,7 +318,6 @@
                     android:layout_height="30dp"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     android:text="Reviews"
                     android:textColor="@color/black"
                     android:textSize="20sp"
