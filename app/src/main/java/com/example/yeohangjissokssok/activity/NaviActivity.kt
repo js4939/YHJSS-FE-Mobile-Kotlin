@@ -9,6 +9,7 @@ import com.example.yeohangjissokssok.databinding.ActivityNaviBinding
 import com.example.yeohangjissokssok.fragment.HomeFragment
 import com.example.yeohangjissokssok.fragment.RecommendFragment
 import com.example.yeohangjissokssok.fragment.SearchFragment
+import com.example.yeohangjissokssok.fragment.SearchResultFragment
 
 private const val TAG_HOME = "home_fragment"
 private const val TAG_SEARCH = "search_fragment"
@@ -29,6 +30,7 @@ class NaviActivity : AppCompatActivity() {
         binding.navigationView.setOnItemSelectedListener { item ->
             when(item.itemId){
                 R.id.homeFragment -> setFragment(TAG_HOME, HomeFragment())
+                //R.id.searchFragment -> setFragment(TAG_SEARCH, SearchResultFragment())
                 R.id.searchFragment -> setFragment(TAG_SEARCH, SearchFragment())
                 R.id.recommendFragment -> setFragment(TAG_RECOMMEND, RecommendFragment())
             }
