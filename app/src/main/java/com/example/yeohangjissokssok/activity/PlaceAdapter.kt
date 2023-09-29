@@ -14,11 +14,11 @@ class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
     var itemClicklistener:OnItemClickListener?=null
 
     inner class ViewHolder(val binding: PlaceRecyclerBinding) :  RecyclerView.ViewHolder(binding.root) {
-        init{
-            binding.tvRvPlace.setOnClickListener {
-                itemClicklistener?.OnItemClick(adapterPosition)
-            }
-        }
+//        init{
+//            binding.tvRvPlace.setOnClickListener {
+//                itemClicklistener?.OnItemClick(adapterPosition)
+//            }
+//        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,7 +31,7 @@ class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.tvRvPlace.text = datas[position].region + " " + datas[position].name
+        //holder.binding.tvRvPlace.text = datas[position].region + " " + datas[position].name
     }
 
 }
