@@ -23,17 +23,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginStart="15dp"
-            app:srcCompat="@drawable/baseline_arrow_back_ios_24"
-            tools:ignore="MissingConstraints" />
+            app:srcCompat="@drawable/baseline_arrow_back_ios_24" />
 
         <EditText
             android:id="@+id/searchText"
             android:layout_width="0dp"
             android:layout_weight="6"
             android:layout_height="50dp"
+            android:paddingStart="15dp"
             android:background="@drawable/background_edittext"
-            android:hint="     장소를 검색하세요"
-            android:cursorVisible="false"
+            android:hint="장소를 검색하세요"
             android:textSize="18sp"/>
 
         <ImageView
@@ -52,6 +51,7 @@
         android:background="@color/defaultColor" />
 
     <TextView
+        android:id="@+id/recentRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -72,6 +72,7 @@
         tools:listitem="@layout/search_recycler" />
 
     <TextView
+        android:id="@+id/lastDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/defaultColor" />
