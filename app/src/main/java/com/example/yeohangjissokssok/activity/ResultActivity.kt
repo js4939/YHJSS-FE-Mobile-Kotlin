@@ -7,10 +7,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.SpinnerAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.ActivityResultBinding
 import com.example.yeohangjissokssok.models.ReviewResponse
@@ -37,7 +43,104 @@ class ResultActivity : AppCompatActivity() {
 
         initLayout()
         initClickEvent()
+        initSpinner()
     }
+
+    private fun initSpinner() {
+        // 스피너 객체 생성
+        val spinner: Spinner = binding.filterBtn
+
+        // 어댑터 적용
+        /*spinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.monthList, R.layout.row_spinner)*/
+        spinner.adapter = ArrayAdapter.createFromResource(this,
+            R.array.monthList, android.R.layout.simple_spinner_dropdown_item)
+
+        // 아이템 선택 리스너
+        spinner.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                binding.apply {
+                    when(position){
+                        // 전체
+                        0 -> {
+
+                        }
+
+                        // 1월
+                        1 -> {
+
+                        }
+
+                        // 2월
+                        2 -> {
+
+                        }
+
+                        // 3월
+                        3 -> {
+
+                        }
+
+                        // 4월
+                        4 -> {
+
+                        }
+
+                        // 5월
+                        5 -> {
+
+                        }
+
+                        // 6월
+                        6 -> {
+
+                        }
+
+                        // 7월
+                        7 -> {
+
+                        }
+
+                        // 8월
+                        8 -> {
+
+                        }
+
+                        // 9월
+                        9 -> {
+
+                        }
+
+                        // 10월
+                        10 -> {
+
+                        }
+
+                        // 11월
+                        11 -> {
+
+                        }
+
+                        // 12월
+                        12 -> {
+
+                        }
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+    }
+
 
 
     // 고쳐야될듯듯
@@ -118,11 +221,9 @@ class ResultActivity : AppCompatActivity() {
 //                startActivity(intent)
             }
 
-            filterBtn.setOnClickListener {
-                // 월별필터 버튼 클릭시 이벤트
-                var intent = Intent(this@ResultActivity, ApplyFilterActivity::class.java)
-                startActivity(intent)
-            }
+//            mapBtn.setOnClickListener {
+//                // 지도 버튼 클릭 시 이벤트
+//            }
         }
     }
 }
