@@ -120,7 +120,16 @@ class RecommendFragment : Fragment() {
         // 초기에 선택된 이미지 리소스 ID를 저장할 변수 초기화
         selectedImageResource = R.drawable.ic_mood_selected
 
+        // btnPurpose를 누른 경우에만 keyword_rv가 보이도록 하는 변수
+        var isPurposeButtonClicked = false
+
         btnMood.setOnClickListener {
+            if (isPurposeButtonClicked) {
+                isPurposeButtonClicked = false
+                val keyword_rv = view.findViewById<RecyclerView>(R.id.rv_keywordlist)
+                keyword_rv.visibility = View.GONE
+            }
+
             selectedImageResource = R.drawable.ic_mood_selected
             btnMood.setImageResource(selectedImageResource)
 
@@ -136,6 +145,12 @@ class RecommendFragment : Fragment() {
         }
 
         btnTransport.setOnClickListener {
+            if (isPurposeButtonClicked) {
+                isPurposeButtonClicked = false
+                val keyword_rv = view.findViewById<RecyclerView>(R.id.rv_keywordlist)
+                keyword_rv.visibility = View.GONE
+            }
+
             selectedImageResource = R.drawable.ic_transport_selected
             btnTransport.setImageResource(selectedImageResource)
 
@@ -149,6 +164,12 @@ class RecommendFragment : Fragment() {
         }
 
         btnCongestion.setOnClickListener {
+            if (isPurposeButtonClicked) {
+                isPurposeButtonClicked = false
+                val keyword_rv = view.findViewById<RecyclerView>(R.id.rv_keywordlist)
+                keyword_rv.visibility = View.GONE
+            }
+
             selectedImageResource = R.drawable.ic_congestion_selected
             btnCongestion.setImageResource(selectedImageResource)
 
@@ -162,6 +183,12 @@ class RecommendFragment : Fragment() {
         }
 
         btnInfra.setOnClickListener {
+            if (isPurposeButtonClicked) {
+                isPurposeButtonClicked = false
+                val keyword_rv = view.findViewById<RecyclerView>(R.id.rv_keywordlist)
+                keyword_rv.visibility = View.GONE
+            }
+
             selectedImageResource = R.drawable.ic_infra_selected
             btnInfra.setImageResource(selectedImageResource)
 
@@ -183,9 +210,24 @@ class RecommendFragment : Fragment() {
             btnCongestion.setImageResource(R.drawable.ic_congestion)
             btnInfra.setImageResource(R.drawable.ic_infra)
 
+            // btnPurpose를 눌렀음을 표시
+            isPurposeButtonClicked = true
+
             // 키워드 관련 액션 추가 예정
             val keyword_rv = view.findViewById<RecyclerView>(R.id.rv_keywordlist)
             keyword_rv.visibility=View.VISIBLE
+
+            // 버튼 상태를 초기화하는 코드 (나머지 버튼은 선택 해제되도록)
+            isMoodClicked = false
+            isTransportClicked = false
+            isCongestionClicked = false
+            isInfraClicked = false
+
+            // 나머지 버튼 이미지 업데이트
+            btnMood.setImageResource(R.drawable.ic_mood)
+            btnTransport.setImageResource(R.drawable.ic_transport)
+            btnCongestion.setImageResource(R.drawable.ic_congestion)
+            btnInfra.setImageResource(R.drawable.ic_infra)
 
             buttonAdapter.setOnItemClickListener(object : ButtonAdapter.OnItemClickListener {
                 override fun onItemClick(item: String, position: Int) {
@@ -209,8 +251,6 @@ class RecommendFragment : Fragment() {
                     }
                 }
             })
-
-
 
         }
 
