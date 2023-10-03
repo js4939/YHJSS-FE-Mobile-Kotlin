@@ -24,8 +24,8 @@ class ReviewAdapter(var datas: ArrayList<ReviewResponse>)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when(datas[position].state){
-            0 -> holder.binding.reviewState.text = "부정"
-            1 -> holder.binding.reviewState.text = "긍정"
+            0 -> holder.binding.reviewState.text = "긍정"
+            1 -> holder.binding.reviewState.text = "부정"
             2 -> holder.binding.reviewState.text = "중립"
         }
         holder.binding.reviewContent.text = datas[position].content

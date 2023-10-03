@@ -70,15 +70,39 @@ class ResultActivity : AppCompatActivity() {
                 override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
                     Log.d("test", "연결실패")
                 }
-
             })
         }
     }
 
-    // 리뷰 불러오는 메소드
-    private fun getPlaceReviews(input: String, callback: (List<ReviewResponse>) -> Unit) {
+    // 카테고리 별 리뷰 불러오는 메소드
+    private fun getPlaceReviews(category: String, callback: (List<ReviewResponse>) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
-            RetrofitBuilder.api.getPlaceByName(input).enqueue(object : Callback<APIResponseData> {
+            RetrofitBuilder.api.getReviews(saPlaceId, category).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<ReviewResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<ReviewResponse>::class.java)
+                            .toList()
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    // 월 별 리뷰 불러오는 메소드
+    private fun getPlaceMonthReviews(category: String, callback: (List<ReviewResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getMonthReviews(saPlaceId, category).enqueue(object : Callback<APIResponseData> {
                 override fun onResponse(
                     call: Call<APIResponseData>, response: Response<APIResponseData>
                 ) {
@@ -186,6 +210,7 @@ class ResultActivity : AppCompatActivity() {
         getPlaceSAResult(placeId) {
             result ->
             saPlaceId = result[0].samonthlysummary_id
+
             binding.apply {
                 // "분위기" 카테고리 내용으로 비율 초기화
                 setRadioButton(result)
@@ -211,88 +236,6 @@ class ResultActivity : AppCompatActivity() {
 
         // RecyclerView 갱신
         adapter.notifyDataSetChanged()
-    }
-
-    private fun setRadioButton(result: List<SAPlaceResponse>){
-        binding.apply {
-            when(radioGroup.checkedRadioButtonId){
-                R.id.radioButton1 -> {
-                    // 분위기 선택 시
-                    var reviewCount = result[0].positive + result[0].negative + result[0].neutral
-                    var pos = 0.0
-                    var neg = 0.0
-                    var neu = 0.0
-
-                    if(result[0].positive != 0)
-                        pos = result[0].positive.toDouble()/reviewCount * 100
-                    if(result[0].negative != 0)
-                        neg = result[0].negative.toDouble()/reviewCount * 100
-                    if(result[0].neutral != 0)
-                        neu = result[0].neutral.toDouble()/reviewCount * 100
-
-                    PosPercent.text = round(pos).toInt().toString() + "%"
-                    NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
-                }
-
-                R.id.radioButton2 -> {
-                    // 교통 선택 시
-                    var reviewCount = result[1].positive + result[1].negative + result[1].neutral
-                    var pos = 0.0
-                    var neg = 0.0
-                    var neu = 0.0
-
-                    if(result[1].positive != 0)
-                        pos = result[1].positive.toDouble()/reviewCount * 100
-                    if(result[1].negative != 0)
-                        neg = result[1].negative.toDouble()/reviewCount * 100
-                    if(result[1].neutral != 0)
-                        neu = result[1].neutral.toDouble()/reviewCount * 100
-
-                    PosPercent.text = round(pos).toInt().toString() + "%"
-                    NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
-                }
-
-                R.id.radioButton3 -> {
-                    // 혼잡도 선택 시
-                    var reviewCount = result[2].positive + result[2].negative + result[2].neutral
-                    var pos = 0.0
-                    var neg = 0.0
-                    var neu = 0.0
-
-                    if(result[2].positive != 0)
-                        pos = result[2].positive.toDouble()/reviewCount * 100
-                    if(result[2].negative != 0)
-                        neg = result[2].negative.toDouble()/reviewCount * 100
-                    if(result[2].neutral != 0)
-                        neu = result[2].neutral.toDouble()/reviewCount * 100
-
-                    PosPercent.text = round(pos).toInt().toString() + "%"
-                    NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
-                }
-
-                R.id.radioButton4 -> {
-                    // 인프라 선택 시
-                    var reviewCount = result[3].positive + result[3].negative + result[3].neutral
-                    var pos = 0.0
-                    var neg = 0.0
-                    var neu = 0.0
-
-                    if(result[3].positive != 0)
-                        pos = result[3].positive.toDouble()/reviewCount * 100
-                    if(result[3].negative != 0)
-                        neg = result[3].negative.toDouble()/reviewCount * 100
-                    if(result[3].neutral != 0)
-                        neu = result[3].neutral.toDouble()/reviewCount * 100
-
-                    PosPercent.text = round(pos).toInt().toString() + "%"
-                    NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
-                }
-            }
-        }
     }
 
     private fun initClickEvent(result: List<SAPlaceResponse>) {
@@ -325,6 +268,116 @@ class ResultActivity : AppCompatActivity() {
             }
             radioButton4.setOnClickListener {
                 setRadioButton(result)
+            }
+        }
+    }
+
+    private fun setReviews(category: String){
+        binding.apply{
+            getPlaceReviews(category){
+                result ->
+                Log.d("reviews", result.toString())
+
+                    datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+                    datas.addAll(result)
+                    if(result == null){
+
+                    }
+                    adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun setRadioButton(result: List<SAPlaceResponse>){
+        binding.apply {
+            when(radioGroup.checkedRadioButtonId){
+                R.id.radioButton1 -> {
+                    // 분위기 선택 시
+                    var reviewCount = result[0].positive + result[0].negative + result[0].neutral
+                    var pos = 0.0
+                    var neg = 0.0
+                    var neu = 0.0
+
+                    if(result[0].positive != 0)
+                        pos = result[0].positive.toDouble()/reviewCount * 100
+                    if(result[0].negative != 0)
+                        neg = result[0].negative.toDouble()/reviewCount * 100
+                    if(result[0].neutral != 0)
+                        neu = result[0].neutral.toDouble()/reviewCount * 100
+
+                    PosPercent.text = round(pos).toInt().toString() + "%"
+                    NegPercent.text = round(neg).toInt().toString() + "%"
+                    NeuPercent.text = round(neu).toInt().toString() + "%"
+
+                    // 리뷰 불러오기
+                    setReviews("C001")
+                }
+
+                R.id.radioButton2 -> {
+                    // 교통 선택 시
+                    var reviewCount = result[1].positive + result[1].negative + result[1].neutral
+                    var pos = 0.0
+                    var neg = 0.0
+                    var neu = 0.0
+
+                    if(result[1].positive != 0)
+                        pos = result[1].positive.toDouble()/reviewCount * 100
+                    if(result[1].negative != 0)
+                        neg = result[1].negative.toDouble()/reviewCount * 100
+                    if(result[1].neutral != 0)
+                        neu = result[1].neutral.toDouble()/reviewCount * 100
+
+                    PosPercent.text = round(pos).toInt().toString() + "%"
+                    NegPercent.text = round(neg).toInt().toString() + "%"
+                    NeuPercent.text = round(neu).toInt().toString() + "%"
+
+                    // 리뷰 불러오기
+                    setReviews("C002")
+                }
+
+                R.id.radioButton3 -> {
+                    // 혼잡도 선택 시
+                    var reviewCount = result[2].positive + result[2].negative + result[2].neutral
+                    var pos = 0.0
+                    var neg = 0.0
+                    var neu = 0.0
+
+                    if(result[2].positive != 0)
+                        pos = result[2].positive.toDouble()/reviewCount * 100
+                    if(result[2].negative != 0)
+                        neg = result[2].negative.toDouble()/reviewCount * 100
+                    if(result[2].neutral != 0)
+                        neu = result[2].neutral.toDouble()/reviewCount * 100
+
+                    PosPercent.text = round(pos).toInt().toString() + "%"
+                    NegPercent.text = round(neg).toInt().toString() + "%"
+                    NeuPercent.text = round(neu).toInt().toString() + "%"
+
+                    // 리뷰 불러오기
+                    setReviews("C003")
+                }
+
+                R.id.radioButton4 -> {
+                    // 인프라 선택 시
+                    var reviewCount = result[3].positive + result[3].negative + result[3].neutral
+                    var pos = 0.0
+                    var neg = 0.0
+                    var neu = 0.0
+
+                    if(result[3].positive != 0)
+                        pos = result[3].positive.toDouble()/reviewCount * 100
+                    if(result[3].negative != 0)
+                        neg = result[3].negative.toDouble()/reviewCount * 100
+                    if(result[3].neutral != 0)
+                        neu = result[3].neutral.toDouble()/reviewCount * 100
+
+                    PosPercent.text = round(pos).toInt().toString() + "%"
+                    NegPercent.text = round(neg).toInt().toString() + "%"
+                    NeuPercent.text = round(neu).toInt().toString() + "%"
+
+                    // 리뷰 불러오기
+                    setReviews("C004")
+                }
             }
         }
     }
