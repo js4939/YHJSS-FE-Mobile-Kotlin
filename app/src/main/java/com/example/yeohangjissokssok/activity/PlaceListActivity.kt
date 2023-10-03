@@ -79,9 +79,9 @@ class PlaceListActivity : AppCompatActivity() {
 
     private fun initRecycler() {
         // 데이터 추가
-        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
-        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
-        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
+        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null, 0.0, 0.0, "photo"))
+        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null, 0.0, 0.0, "photo"))
+        datas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null, 0.0, 0.0, "photo"))
 
         // 어댑터에 데이터 설정
         placeAdapter.datas = datas
@@ -103,7 +103,7 @@ class PlaceListActivity : AppCompatActivity() {
             placeAdapter.itemClicklistener = object:PlaceAdapter.OnItemClickListener{
                 override fun OnItemClick(position: Int) {
                     // 다음 페이지의 http 통신을 위해 여행지 정보 넘겨줘야 함
-                    intent.putExtra("id", placeAdapter.datas[position].id)
+                    intent.putExtra("placeId", placeAdapter.datas[position].id)
                     intent.putExtra("name", placeAdapter.datas[position].name)
                     intent.putExtra("region", placeAdapter.datas[position].region)
                     intent.putExtra("page", "placeList")

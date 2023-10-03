@@ -9,20 +9,20 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RetrofitService {
-    @GET("place/{placeId}")
+    @GET("places/{placeId}")
     fun getPlace(@Path("placeId") number : Long) : Call<APIResponseData>
 
-    @GET("place/name")
+    @GET("places/name")
     fun getPlaceByName(@Query("name") name: String) : Call<APIResponseData>
 
-    @GET("sa/place/{placeId}")
+    @GET("sas/place/{placeId}")
     fun getSAPlace(@Path("placeId") placeId : Long) : Call<APIResponseData>
 
-    @GET("sa/{placeId}/{month}")
+    @GET("sas/{placeId}/{month}")
     fun getSAMonthPlace(@Path("placeId") placeId : Long,
                         @Path("month") month: Int) : Call<APIResponseData>
 
-    @GET("sa/category/{categoryCode}")
+    @GET("sas/category/{categoryCode}")
     fun getSACategoryPlace(@Path("categoryCode") categoryCode : String) : Call<APIResponseData>
 
     @GET("reviews/{saMonthlySummaryId}/{categoryCode}")
