@@ -1,7 +1,7 @@
 package com.example.yeohangjissokssok.models
 
 data class SAPlaceResponse(
-    val samonthlysummary_id: Int,
+    val samonthlysummary_id: Long,
     val category: String,
     val positive: Int,
     val negative: Int,

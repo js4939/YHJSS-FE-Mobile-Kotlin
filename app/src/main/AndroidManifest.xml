@@ -31,12 +31,6 @@
         </activity>
         <activity android:name=".activity.NaviActivity" /> <!-- <activity android:name=".activity.PlaceListActivity" /> -->
         <activity
-            android:name=".activity.ResultWithFilterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.ApplyFilterActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.ResultActivity"
             android:exported="false" />
         <activity

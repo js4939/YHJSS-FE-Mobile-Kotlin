@@ -20,14 +20,15 @@
             <FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3.6">
+                android:layout_weight="3.8">
 
                 <ImageView
                     android:id="@+id/placeImg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/defaultColor"
-                    app:srcCompat="@drawable/ic_home" />
+                    android:scaleType="fitXY"
+                    app:srcCompat="@drawable/baseline_update_24" />
 
                 <ImageView
                     android:id="@+id/goBackBtn"
@@ -124,69 +125,83 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2.3"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
-                <LinearLayout
+                <RadioGroup
+                    android:id="@+id/radioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/category1"
+
+                    <RadioButton
+                        android:id="@+id/radioButton1"
                         android:layout_width="0dp"
-                        android:layout_height="33dp"
                         android:layout_weight="1"
-                        android:background="@drawable/category_style"
-                        android:padding="7dp"
-                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:checked="true"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:layout_marginRight="15dp"
+                        android:text="분위기"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:backgroundTint="@color/positiveColor"
-                        android:text="분위기" />
-                    <TextView
-                        android:id="@+id/category2"
+                        android:background="@drawable/selector_place_radio_button"
+                        android:textColor="@drawable/selector_place_radio_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton2"
                         android:layout_width="0dp"
-                        android:layout_height="33dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="15dp"
-                        android:background="@drawable/category_style"
-                        android:padding="7dp"
-                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/selector_place_radio_button"
+                        android:textColor="@drawable/selector_place_radio_text"
+                        android:button="@null"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:text="교통" />
-                    <TextView
-                        android:id="@+id/category3"
+                        android:text="교통"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton3"
                         android:layout_width="0dp"
-                        android:layout_height="33dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="15dp"
-                        android:background="@drawable/category_style"
-                        android:padding="7dp"
-                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/selector_place_radio_button"
+                        android:textColor="@drawable/selector_place_radio_text"
+                        android:button="@null"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:text="혼잡도" />
-                    <TextView
-                        android:id="@+id/category4"
+                        android:text="혼잡도"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton4"
                         android:layout_width="0dp"
-                        android:layout_height="33dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="15dp"
-                        android:background="@drawable/category_style"
-                        android:padding="7dp"
-                        android:textSize="12sp"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:background="@drawable/selector_place_radio_button"
+                        android:textColor="@drawable/selector_place_radio_text"
+                        android:button="@null"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:text="인프라" />
-                </LinearLayout>
+                        android:text="인프라"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </RadioGroup>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

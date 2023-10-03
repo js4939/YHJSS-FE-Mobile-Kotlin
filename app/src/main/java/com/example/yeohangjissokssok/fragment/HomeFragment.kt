@@ -146,7 +146,6 @@ class HomeFragment : Fragment() {
         getSACategoryPlace(category)
     }
 
-
     private fun initRecycler(result: List<SACategoryResponse>) {
         // 데이터 추가
         datas.clear() // 데이터 초기화
@@ -173,7 +172,7 @@ class HomeFragment : Fragment() {
             placeAdapterRecommend.itemClicklistener =
                 object : PlaceAdapterRecommend.OnItemClickListener {
                     override fun OnItemClick(position: Int) {
-                        // RecommendListFragment를 호스팅하는 Activity에서 다른 Activity로 전환
+                        // HomeFragment를 호스팅하는 Activity에서 다른 Activity로 전환
                         val intent = Intent(requireActivity(), ResultActivity::class.java)
                         intent.putExtra("placeId", placeAdapterRecommend.datas[position].placeId)
                         intent.putExtra("region", placeAdapterRecommend.datas[position].region)
@@ -190,7 +189,7 @@ class HomeFragment : Fragment() {
                             "proportion",
                             placeAdapterRecommend.datas[position].proportion
                         )
-                        intent.putExtra("page", "placeList")
+                        intent.putExtra("page", "home")
                         startActivity(intent)
                     }
                 }

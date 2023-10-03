@@ -9,7 +9,6 @@ import com.example.yeohangjissokssok.databinding.ActivityNaviBinding
 import com.example.yeohangjissokssok.fragment.HomeFragment
 import com.example.yeohangjissokssok.fragment.RecommendFragment
 import com.example.yeohangjissokssok.fragment.SearchFragment
-import com.example.yeohangjissokssok.fragment.SearchResultFragment
 
 private const val TAG_HOME = "home_fragment"
 private const val TAG_SEARCH = "search_fragment"
