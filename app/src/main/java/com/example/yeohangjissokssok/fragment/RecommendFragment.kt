@@ -1,6 +1,6 @@
 package com.example.yeohangjissokssok.fragment
 
-import android.content.Intent
+import PlaceAdapter
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,10 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yeohangjissokssok.R
-import com.example.yeohangjissokssok.activity.APIResponseData
-import com.example.yeohangjissokssok.activity.ButtonAdapter
-import com.example.yeohangjissokssok.activity.PlaceRecommendAdapter
-import com.example.yeohangjissokssok.activity.ResultActivity
+import com.example.yeohangjissokssok.activity.*
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.FragmentRecommendBinding
 import com.example.yeohangjissokssok.models.SACategoryResponse
@@ -28,19 +25,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class RecommendFragment : Fragment() {
 
-    lateinit var placeAdapterRecommend: PlaceRecommendAdapter
+    lateinit var placeAdapter : PlaceAdapter
 
     // 바인딩 객체 선언
     private lateinit var binding: FragmentRecommendBinding
 
-    val datas = ArrayList<SACategoryResponse>()
+    var caPlaceIds = mutableListOf<Long>()
+
+    val datas = ArrayList<PlaceResponse>()
 
     var placeId = 3
     var region = "region"
@@ -83,15 +77,44 @@ class RecommendFragment : Fragment() {
                             .toList()
                         Log.d("result", result.toString())
 
+                        // 받아온 placeId를 caPlaceIds 리스트에 추가
+                        caPlaceIds.clear()
+                        for (item in result) {
+                            caPlaceIds.add(item.placeId)
+                        }
+
                         // initRecycler 함수를 호출하여 데이터 추가
-                        initRecycler(result)
+                        initRecycler()
                     }
                 }
 
                 override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
                     Log.d("test", "연결실패")
                 }
+            })
+        }
+    }
 
+
+    private fun getPlaceById(input: Long, callback: (PlaceResponse) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getPlace(input).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: PlaceResponse = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, PlaceResponse::class.java)
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
             })
         }
     }
@@ -256,8 +279,11 @@ class RecommendFragment : Fragment() {
         val initialCategory = "C001"
         updateRecyclerView(initialCategory)
 
-        placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
-        binding.rvRecommendlist.adapter = placeAdapterRecommend
+        //placeAdapter = PlaceAdapter(this, datas)
+        //binding.rvRecommendlist.adapter = placeAdapter
+
+        //placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
+        //binding.rvRecommendlist.adapter = placeAdapterRecommend
 
         // 리사이클러뷰 구분선 지정
         val dividerItemDecoration =
@@ -274,18 +300,32 @@ class RecommendFragment : Fragment() {
         getSACategoryPlace(category)
     }
 
-
-    private fun initRecycler(result: List<SACategoryResponse>) {
-        // 데이터 추가
+    private fun initRecycler() {
         datas.clear() // 데이터 초기화
-        datas.addAll(result)
 
-        // RecyclerView 어댑터에 데이터 설정
-        placeAdapterRecommend.datas = datas
+        // placeAdapter 초기화
+        placeAdapter = PlaceAdapter(datas)
+        binding.rvRecommendlist.adapter = placeAdapter
 
-        // RecyclerView 갱신
-        placeAdapterRecommend.notifyDataSetChanged()
+        for (placeId in caPlaceIds) {
+            getPlaceById(placeId) { result ->
+                val newPlaceResponse = PlaceResponse(
+                    id = result.id,
+                    name = result.name,
+                    region = result.region,
+                    address = result.address,
+                    latitude = result.latitude,
+                    longitude = result.longitude,
+                    photoUrl = result.photoUrl
+                )
+
+                datas.add(newPlaceResponse)
+                placeAdapter.notifyDataSetChanged()
+                //Log.d("carecycler", result.toString())
+            }
+        }
     }
+
 
 
     private fun initClickEvent() {
@@ -298,30 +338,30 @@ class RecommendFragment : Fragment() {
 
             // adapter에 클릭리스너 부착
             // 여행지 클릭 시 이벤트
-            placeAdapterRecommend.itemClicklistener =
-                object : PlaceRecommendAdapter.OnItemClickListener {
-                    override fun OnItemClick(position: Int) {
-                        // RecommendListFragment를 호스팅하는 Activity에서 다른 Activity로 전환
-                        val intent = Intent(requireActivity(), ResultActivity::class.java)
-                        intent.putExtra("placeId", placeAdapterRecommend.datas[position].placeId)
-                        intent.putExtra("region", placeAdapterRecommend.datas[position].region)
-                        intent.putExtra("name", placeAdapterRecommend.datas[position].name)
-                        intent.putExtra(
-                            "positiveNumber",
-                            placeAdapterRecommend.datas[position].positiveNumber
-                        )
-                        intent.putExtra(
-                            "totalNumber",
-                            placeAdapterRecommend.datas[position].totalNumber
-                        )
-                        intent.putExtra(
-                            "proportion",
-                            placeAdapterRecommend.datas[position].proportion
-                        )
-                        intent.putExtra("page", "placeList")
-                        startActivity(intent)
-                    }
-                }
+            //placeAdapter.itemClicklistener =
+//                object : PlaceRecommendAdapter.OnItemClickListener {
+//                    override fun OnItemClick(position: Int) {
+//                        // RecommendListFragment를 호스팅하는 Activity에서 다른 Activity로 전환
+//                        val intent = Intent(requireActivity(), ResultActivity::class.java)
+//                        intent.putExtra("placeId", placeAdapterRecommend.datas[position].placeId)
+//                        intent.putExtra("region", placeAdapterRecommend.datas[position].region)
+//                        intent.putExtra("name", placeAdapterRecommend.datas[position].name)
+//                        intent.putExtra(
+//                            "positiveNumber",
+//                            placeAdapterRecommend.datas[position].positiveNumber
+//                        )
+//                        intent.putExtra(
+//                            "totalNumber",
+//                            placeAdapterRecommend.datas[position].totalNumber
+//                        )
+//                        intent.putExtra(
+//                            "proportion",
+//                            placeAdapterRecommend.datas[position].proportion
+//                        )
+//                        intent.putExtra("page", "placeList")
+//                        startActivity(intent)
+//                    }
+//                }
         }
     }
 }
