@@ -1,5 +1,6 @@
 package com.example.yeohangjissokssok.fragment
 
+import PlaceAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.yeohangjissokssok.activity.APIResponseData
-import com.example.yeohangjissokssok.activity.PlaceRecommendAdapter
+import com.example.yeohangjissokssok.activity.PlaceResponse
 import com.example.yeohangjissokssok.activity.ResultActivity
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.FragmentHomeBinding
 import com.example.yeohangjissokssok.models.SACategoryResponse
+import com.example.yeohangjissokssok.models.SAPlaceResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +27,7 @@ import retrofit2.Response
 import java.time.LocalDate
 
 class HomeFragment : Fragment() {
-    lateinit var placeAdapterRecommend: PlaceRecommendAdapter
+    //lateinit var placeAdapter : PlaceAdapter
 
     // 바인딩 객체 선언
     private lateinit var binding: FragmentHomeBinding
@@ -33,7 +35,9 @@ class HomeFragment : Fragment() {
     val curDate: LocalDate = LocalDate.now()
     val month = curDate.monthValue
 
-    val datas = ArrayList<SACategoryResponse>()
+    var caPlaceIds = mutableListOf<Long>()
+
+    val datas = ArrayList<PlaceResponse>()
 
     var placeId = 3
     var region = "region"
@@ -60,10 +64,39 @@ class HomeFragment : Fragment() {
                             .create()
                             .fromJson(jsonResult, Array<SACategoryResponse>::class.java)
                             .toList()
-                        Log.d("result", result.toString())
+                        Log.d("home fragment result", result.toString())
+
+                        // 받아온 placeId를 caPlaceIds 리스트에 추가
+                        caPlaceIds.clear()
+                        for (item in result) {
+                            caPlaceIds.add(item.placeId)
+                        }
 
                         // initRecycler 함수를 호출하여 데이터 추가
-                        initRecycler(result)
+                        initRecycler()
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    private fun getPlaceById(input: Long, callback: (PlaceResponse) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getPlace(input).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: PlaceResponse = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, PlaceResponse::class.java)
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
                     }
                 }
 
@@ -122,14 +155,15 @@ class HomeFragment : Fragment() {
         val initialCategory = "C001"
         updateRecyclerView(initialCategory)
 
-        placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
-        binding.rvPlace.adapter = placeAdapterRecommend
+        //placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
+        //binding.rvPlace.adapter = placeAdapterRecommend
 
         // 리사이클러뷰 구분선 지정
         val dividerItemDecoration =
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         binding.rvPlace.addItemDecoration(dividerItemDecoration)
 
+        // 이곳에서 initClickEvent() 호출
         initClickEvent()
 
         return view
@@ -140,49 +174,49 @@ class HomeFragment : Fragment() {
         getMonthSACategoryPlace(category)
     }
 
-    private fun initRecycler(result: List<SACategoryResponse>) {
-        // 데이터 추가
+    private fun initRecycler() {
         datas.clear() // 데이터 초기화
-        datas.addAll(result)
 
-        // RecyclerView 어댑터에 데이터 설정
-        placeAdapterRecommend.datas = datas
+        // placeAdapter 초기화
+        val placeAdapter = PlaceAdapter(datas)
+        binding.rvPlace.adapter = placeAdapter
 
-        // RecyclerView 갱신
-        placeAdapterRecommend.notifyDataSetChanged()
+        for (placeId in caPlaceIds) {
+            getPlaceById(placeId) { result ->
+                val newPlaceResponse = PlaceResponse(
+                    id = result.id,
+                    name = result.name,
+                    region = result.region,
+                    address = result.address,
+                    latitude = result.latitude,
+                    longitude = result.longitude,
+                    photoUrl = result.photoUrl
+                )
+
+                datas.add(newPlaceResponse)
+                placeAdapter.notifyDataSetChanged()
+                //Log.d("carecycler", result.toString())
+            }
+        }
     }
 
 
     private fun initClickEvent() {
         binding.apply {
-            //            goBackBtn.setOnClickListener {
-            //                // 뒤로가기 버튼 클릭 시 이벤트
-            //                requireActivity().onBackPressed() // 현재 Fragment를 스택에서 제거
-            //            }
-
-            // adapter에 클릭리스너 부착
-            // 여행지 클릭 시 이벤트
-            placeAdapterRecommend.itemClicklistener =
-                object : PlaceRecommendAdapter.OnItemClickListener {
+             //adapter에 클릭리스너 부착
+             //여행지 클릭 시 이벤트
+            val placeAdapter = PlaceAdapter(datas)
+            placeAdapter.itemClicklistener =
+                object : PlaceAdapter.OnItemClickListener {
                     override fun OnItemClick(position: Int) {
                         // HomeFragment를 호스팅하는 Activity에서 다른 Activity로 전환
                         val intent = Intent(requireActivity(), ResultActivity::class.java)
-                        intent.putExtra("placeId", placeAdapterRecommend.datas[position].placeId)
-                        intent.putExtra("region", placeAdapterRecommend.datas[position].region)
-                        intent.putExtra("name", placeAdapterRecommend.datas[position].name)
-                        intent.putExtra(
-                            "positiveNumber",
-                            placeAdapterRecommend.datas[position].positiveNumber
-                        )
-                        intent.putExtra(
-                            "totalNumber",
-                            placeAdapterRecommend.datas[position].totalNumber
-                        )
-                        intent.putExtra(
-                            "proportion",
-                            placeAdapterRecommend.datas[position].proportion
-                        )
+                        intent.putExtra("placeId", placeAdapter.datas[position].id)
+                        intent.putExtra("region", placeAdapter.datas[position].region)
+                        intent.putExtra("name", placeAdapter.datas[position].name)
                         intent.putExtra("page", "home")
+                        Log.d("IntentData", "placeId: ${intent.getLongExtra("placeId", -1)}, region: ${intent.getStringExtra("region")}, name: ${intent.getStringExtra("name")}, page: ${intent.getStringExtra("page")}")
+
                         startActivity(intent)
                     }
                 }

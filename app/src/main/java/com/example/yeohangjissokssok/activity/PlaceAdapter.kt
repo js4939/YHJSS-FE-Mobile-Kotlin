@@ -18,10 +18,14 @@ class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
     inner class ViewHolder(val binding: PlaceRecyclerBinding) :  RecyclerView.ViewHolder(binding.root) {
         init{
             binding.tvRvPlacename.setOnClickListener {
-                itemClicklistener?.OnItemClick(adapterPosition)
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    itemClicklistener?.OnItemClick(position)
+                }
             }
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceAdapter.ViewHolder {
         val view = PlaceRecyclerBinding.inflate(LayoutInflater.from(parent.context))

@@ -33,12 +33,6 @@
         <activity
             android:name=".activity.ResultActivity"
             android:exported="false" />
-        <activity
-            android:name=".activity.RecommendListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.PlaceListActivity"
-            android:exported="false" />
     </application>
 
 </manifest>
