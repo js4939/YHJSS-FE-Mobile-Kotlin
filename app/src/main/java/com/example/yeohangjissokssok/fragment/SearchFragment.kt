@@ -57,18 +57,17 @@ class SearchFragment : Fragment() {
         recyclerViewBinding = SearchRecyclerBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // 데이터 추가
-        datas.add("서울")
         datas.add("부산")
+        datas.add("서울")
 
+        // 검색 버튼 누르기 전 최근 검색 화면
         searchAdapter = SearchAdapter(this.datas)
         binding.recyclerView.adapter = searchAdapter
 
+        placeAdapter = PlaceAdapter(placeDatas)
+
         // RecyclerView 어댑터에 데이터 설정
         searchAdapter.datas = datas
-
-        // RecyclerView 갱신
-        searchAdapter.notifyDataSetChanged()
 
         initClickEvent()
 
@@ -76,7 +75,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun initClickEvent() {
-
         searchAdapter.itemClicklistener =
             object : SearchAdapter.OnItemClickListener {
                 // 최근 검색 리사이클러뷰 data 클릭 리스너
@@ -91,12 +89,11 @@ class SearchFragment : Fragment() {
                     dividerItemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
                     binding.recyclerView.addItemDecoration(dividerItemDecoration)
 
-                    initPlaceRecycler()
-
                     var searchText = searchAdapter.datas[position]
                     Log.d("data", searchText)
                     if (searchText.isNotEmpty()) {
                         fetchPlacesByName(searchText)
+                        initPlaceRecycler()
 
                         binding.searchText.setText(searchText)
                         binding.searchText.setSelection(0, searchText.length)
@@ -119,11 +116,25 @@ class SearchFragment : Fragment() {
                 override fun DeleteClick(pos: Int) {
                     searchAdapter.removeData(pos)
 
-                    // 마지막 data까지 삭제하면 마지막 구분선 및 "최근 검색" 제거
+                    // 마지막 data까지 삭제하면 마지막 구분선 제거
                     if(datas.isEmpty()) {
                         binding.lastDivider.visibility = View.GONE
-                        binding.recentRecord.visibility = View.GONE
+                        //binding.recentRecord.visibility = View.GONE
                     }
+                }
+            }
+
+        placeAdapter.itemClicklistener =
+            object : PlaceAdapter.OnItemClickListener {
+                override fun OnItemClick(position: Int) {
+                    // SearchFragment를 호스팅하는 Activity에서 다른 Activity로 전환
+                    Log.d("전환", "전환")
+                    val intent = Intent(requireActivity(), ResultActivity::class.java)
+                    intent.putExtra("placeId", placeAdapter.datas[position].id)
+                    intent.putExtra("region", placeAdapter.datas[position].region)
+                    intent.putExtra("name", placeAdapter.datas[position].name)
+                    intent.putExtra("page", "search")
+                    startActivity(intent)
                 }
             }
 
@@ -167,6 +178,7 @@ class SearchFragment : Fragment() {
                 val searchText = binding.searchText.text.toString()
                 if (searchText.isNotEmpty()) {
                     fetchPlacesByName(searchText)
+                    initPlaceRecycler()
 
                     // datas에 해당 검색어가 이미 존재하면 삭제한 후 추가
                     if(datas.contains(searchText))
@@ -196,10 +208,14 @@ class SearchFragment : Fragment() {
 
         // RecyclerView 갱신
         searchAdapter.notifyDataSetChanged()
+        initClickEvent()
     }
 
     private fun initPlaceRecycler() {
         // 어댑터에 데이터 설정
+        placeAdapter = PlaceAdapter(placeDatas)
+        binding.recyclerView.adapter = placeAdapter
+
         placeAdapter.datas = placeDatas
 
         // RecyclerView를 갱신
