@@ -279,12 +279,6 @@ class RecommendFragment : Fragment() {
         val initialCategory = "C001"
         updateRecyclerView(initialCategory)
 
-        //placeAdapter = PlaceAdapter(this, datas)
-        //binding.rvRecommendlist.adapter = placeAdapter
-
-        //placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
-        //binding.rvRecommendlist.adapter = placeAdapterRecommend
-
         // 리사이클러뷰 구분선 지정
         val dividerItemDecoration =
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
