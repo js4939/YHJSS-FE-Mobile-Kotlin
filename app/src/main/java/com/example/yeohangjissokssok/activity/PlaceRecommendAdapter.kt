@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.yeohangjissokssok.databinding.PlaceRecyclerBinding
 import com.example.yeohangjissokssok.models.SACategoryResponse
 
-class PlaceAdapterRecommend(var datas: ArrayList<SACategoryResponse>)
-    : RecyclerView.Adapter<PlaceAdapterRecommend.ViewHolder>() {
+class PlaceRecommendAdapter(var datas: ArrayList<SACategoryResponse>)
+    : RecyclerView.Adapter<PlaceRecommendAdapter.ViewHolder>() {
 
     interface OnItemClickListener{
         fun OnItemClick(position:Int)
@@ -23,7 +23,7 @@ class PlaceAdapterRecommend(var datas: ArrayList<SACategoryResponse>)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceAdapterRecommend.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceRecommendAdapter.ViewHolder {
         val view = PlaceRecyclerBinding.inflate(LayoutInflater.from(parent.context))
         return ViewHolder(view)
     }

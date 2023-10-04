@@ -1,6 +1,5 @@
 package com.example.yeohangjissokssok.activity
 
-import PlaceAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,7 +20,7 @@ import retrofit2.Response
 
 class RecommendListActivity : AppCompatActivity() {
 
-    lateinit var placeAdapterRecommend: PlaceAdapterRecommend
+    lateinit var placeAdapterRecommend: PlaceRecommendAdapter
 
     // 바인딩 객체 선언
     private lateinit var binding: ActivityRecommendListBinding
@@ -74,7 +73,7 @@ class RecommendListActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        placeAdapterRecommend = PlaceAdapterRecommend(this.datas)
+        placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
         binding.rvRecommendlist.adapter=placeAdapterRecommend
 
         // 리사이클러뷰 구분선 지정
@@ -114,7 +113,7 @@ class RecommendListActivity : AppCompatActivity() {
             // adapter에 클릭리스너 부착
             // 여행지 클릭 시 이벤트
             val intent = Intent(this@RecommendListActivity, ResultActivity::class.java)
-            placeAdapterRecommend.itemClicklistener = object:PlaceAdapterRecommend.OnItemClickListener{
+            placeAdapterRecommend.itemClicklistener = object:PlaceRecommendAdapter.OnItemClickListener{
                 override fun OnItemClick(position: Int) {
                     // 다음 페이지의 http 통신을 위해 여행지 정보 넘겨줘야 함
                     intent.putExtra("placeId", placeAdapterRecommend.datas[position].placeId)
