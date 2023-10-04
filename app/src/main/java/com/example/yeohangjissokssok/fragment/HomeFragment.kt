@@ -22,12 +22,16 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
 
 class HomeFragment : Fragment() {
     lateinit var placeAdapterRecommend: PlaceRecommendAdapter
 
     // 바인딩 객체 선언
     private lateinit var binding: FragmentHomeBinding
+
+    val curDate: LocalDate = LocalDate.now()
+    val month = curDate.monthValue
 
     val datas = ArrayList<SACategoryResponse>()
 
@@ -41,16 +45,9 @@ class HomeFragment : Fragment() {
     private var selectedImageResource: Int = 0
     private var selectedButtonIndex: Int = -1
 
-    var isMoodClicked = false
-    var isTransportClicked = false
-    var isCongestionClicked = false
-    var isInfraClicked = false
-    var isPurposeClicked = false
-
-
-    private fun getSACategoryPlace(input: String) {
+    private fun getMonthSACategoryPlace(input: String) {
         CoroutineScope(Dispatchers.Main).launch {
-            RetrofitBuilder.api.getSACategoryPlace(input).enqueue(object :
+            RetrofitBuilder.api.getMonthSACategoryPlace(input, month).enqueue(object :
                 Callback<APIResponseData> {
                 override fun onResponse(
                     call: Call<APIResponseData>,
@@ -73,7 +70,6 @@ class HomeFragment : Fragment() {
                 override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
                     Log.d("test", "연결실패")
                 }
-
             })
         }
     }
@@ -87,8 +83,12 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        Log.d("month", month.toString())
 
         binding.apply {
+            // 현재 날짜 기준 월 설정
+            monthText.text = month.toString() + "월 BEST"
+
             // 클릭 이벤트 핸들러 내에서 getSACategoryPlace를 호출하지 않고
             // 해당 카테고리를 저장하고, 아래에서 한 번에 호출하도록 변경
             lateinit var category:String
@@ -137,7 +137,7 @@ class HomeFragment : Fragment() {
 
     private fun updateRecyclerView(category: String) {
         // 서버와 통신하여 리사이클러뷰 데이터 업데이트
-        getSACategoryPlace(category)
+        getMonthSACategoryPlace(category)
     }
 
     private fun initRecycler(result: List<SACategoryResponse>) {
@@ -159,7 +159,6 @@ class HomeFragment : Fragment() {
             //                // 뒤로가기 버튼 클릭 시 이벤트
             //                requireActivity().onBackPressed() // 현재 Fragment를 스택에서 제거
             //            }
-
 
             // adapter에 클릭리스너 부착
             // 여행지 클릭 시 이벤트
