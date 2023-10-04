@@ -7,18 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.activity.APIResponseData
-import com.example.yeohangjissokssok.activity.ButtonAdapter
-import com.example.yeohangjissokssok.activity.PlaceAdapterRecommend
+import com.example.yeohangjissokssok.activity.PlaceRecommendAdapter
 import com.example.yeohangjissokssok.activity.ResultActivity
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.FragmentHomeBinding
-import com.example.yeohangjissokssok.databinding.FragmentRecommendBinding
 import com.example.yeohangjissokssok.models.SACategoryResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -30,7 +24,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class HomeFragment : Fragment() {
-    lateinit var placeAdapterRecommend: PlaceAdapterRecommend
+    lateinit var placeAdapterRecommend: PlaceRecommendAdapter
 
     // 바인딩 객체 선언
     private lateinit var binding: FragmentHomeBinding
@@ -128,7 +122,7 @@ class HomeFragment : Fragment() {
         val initialCategory = "C001"
         updateRecyclerView(initialCategory)
 
-        placeAdapterRecommend = PlaceAdapterRecommend(this.datas)
+        placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
         binding.rvPlace.adapter = placeAdapterRecommend
 
         // 리사이클러뷰 구분선 지정
@@ -170,7 +164,7 @@ class HomeFragment : Fragment() {
             // adapter에 클릭리스너 부착
             // 여행지 클릭 시 이벤트
             placeAdapterRecommend.itemClicklistener =
-                object : PlaceAdapterRecommend.OnItemClickListener {
+                object : PlaceRecommendAdapter.OnItemClickListener {
                     override fun OnItemClick(position: Int) {
                         // HomeFragment를 호스팅하는 Activity에서 다른 Activity로 전환
                         val intent = Intent(requireActivity(), ResultActivity::class.java)

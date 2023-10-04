@@ -1,6 +1,7 @@
 package com.example.yeohangjissokssok.fragment
 
 import PlaceAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -39,11 +40,11 @@ class SearchFragment : Fragment() {
     private lateinit var searchEditText: EditText
     private lateinit var searchBtnInplacelist: ImageView
 
-    private var visibilityListener: FragmentVisibilityListener? = null
-
-    fun setVisibilityListener(listener: FragmentVisibilityListener) {
-        visibilityListener = listener
-    }
+//    private var visibilityListener: FragmentVisibilityListener? = null
+//
+//    fun setVisibilityListener(listener: FragmentVisibilityListener) {
+//        visibilityListener = listener
+//    }
 
     lateinit var dividerItemDecoration:DividerItemDecoration
 
@@ -59,11 +60,6 @@ class SearchFragment : Fragment() {
         // 데이터 추가
         datas.add("서울")
         datas.add("부산")
-
-        // 데이터 추가
-        placeDatas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
-        placeDatas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
-        placeDatas.add(PlaceResponse(1, "낙성대공원", "서울 관악", null))
 
         searchAdapter = SearchAdapter(this.datas)
         binding.recyclerView.adapter = searchAdapter
@@ -84,7 +80,7 @@ class SearchFragment : Fragment() {
         searchAdapter.itemClicklistener =
             object : SearchAdapter.OnItemClickListener {
                 // 최근 검색 리사이클러뷰 data 클릭 리스너
-                override fun OnItemClick(pos: Int) {
+                override fun OnItemClick(position: Int) {
                     placeAdapter = PlaceAdapter(placeDatas)
                     binding.recyclerView.adapter = placeAdapter
 
@@ -97,7 +93,7 @@ class SearchFragment : Fragment() {
 
                     initPlaceRecycler()
 
-                    var searchText = searchAdapter.datas[pos]
+                    var searchText = searchAdapter.datas[position]
                     Log.d("data", searchText)
                     if (searchText.isNotEmpty()) {
                         fetchPlacesByName(searchText)
@@ -179,7 +175,7 @@ class SearchFragment : Fragment() {
                     searchAdapter.notifyDataSetChanged()
 
                     // 검색 버튼 클릭 시 Fragment의 가시성 변경을 알림
-                    visibilityListener?.onFragmentVisibilityChanged(true)
+                    //visibilityListener?.onFragmentVisibilityChanged(true)
 
                     // 검색 버튼 클릭 시 리사이클러뷰를 보이도록 변경
                     binding.recyclerView.visibility = View.VISIBLE
