@@ -28,6 +28,7 @@ class ReviewAdapter(var datas: ArrayList<ReviewResponse>)
             1 -> holder.binding.reviewState.text = "부정"
             3 -> holder.binding.reviewState.text = "중립"
         }
+        holder.binding.reviewDate.text = datas[position].date
         holder.binding.reviewContent.text = datas[position].content
     }
 }
