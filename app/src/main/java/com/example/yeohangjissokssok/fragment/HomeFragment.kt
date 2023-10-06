@@ -38,6 +38,7 @@ class HomeFragment : Fragment() {
     var caPlaceIds = mutableListOf<Long>()
 
     val datas = ArrayList<PlaceResponse>()
+    val placeAdapter = PlaceAdapter(datas)
 
     var placeId = 3
     var region = "region"
@@ -178,7 +179,7 @@ class HomeFragment : Fragment() {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
-        val placeAdapter = PlaceAdapter(datas)
+        //placeAdapter = PlaceAdapter(datas)
         binding.rvPlace.adapter = placeAdapter
 
         for (placeId in caPlaceIds) {
@@ -200,12 +201,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun initClickEvent() {
         binding.apply {
              //adapter에 클릭리스너 부착
              //여행지 클릭 시 이벤트
-            val placeAdapter = PlaceAdapter(datas)
             placeAdapter.itemClicklistener =
                 object : PlaceAdapter.OnItemClickListener {
                     override fun OnItemClick(position: Int) {

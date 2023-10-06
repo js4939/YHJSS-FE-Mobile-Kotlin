@@ -26,8 +26,9 @@ class ReviewAdapter(var datas: ArrayList<ReviewResponse>)
         when(datas[position].state){
             0 -> holder.binding.reviewState.text = "긍정"
             1 -> holder.binding.reviewState.text = "부정"
-            2 -> holder.binding.reviewState.text = "중립"
+            3 -> holder.binding.reviewState.text = "중립"
         }
+        holder.binding.reviewDate.text = datas[position].date
         holder.binding.reviewContent.text = datas[position].content
     }
 }

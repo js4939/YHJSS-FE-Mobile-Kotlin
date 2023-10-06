@@ -26,7 +26,6 @@ import retrofit2.Response
 
 class SearchFragment : Fragment() {
     lateinit var searchAdapter: SearchAdapter
-    lateinit var placeAdapter: PlaceAdapter
 
     // 바인딩 객체 선언
     private lateinit var binding: FragmentSearchBinding
@@ -34,17 +33,12 @@ class SearchFragment : Fragment() {
 
     val placeDatas = ArrayList<PlaceResponse>()
     val datas = ArrayList<String>()
+    val placeAdapter = PlaceAdapter(placeDatas)
 
     var name = "name"
 
     private lateinit var searchEditText: EditText
     private lateinit var searchBtnInplacelist: ImageView
-
-//    private var visibilityListener: FragmentVisibilityListener? = null
-//
-//    fun setVisibilityListener(listener: FragmentVisibilityListener) {
-//        visibilityListener = listener
-//    }
 
     lateinit var dividerItemDecoration:DividerItemDecoration
 
@@ -57,14 +51,12 @@ class SearchFragment : Fragment() {
         recyclerViewBinding = SearchRecyclerBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        datas.add("부산")
+        datas.add("종로")
         datas.add("서울")
 
         // 검색 버튼 누르기 전 최근 검색 화면
         searchAdapter = SearchAdapter(this.datas)
         binding.recyclerView.adapter = searchAdapter
-
-        placeAdapter = PlaceAdapter(placeDatas)
 
         // RecyclerView 어댑터에 데이터 설정
         searchAdapter.datas = datas
@@ -79,7 +71,6 @@ class SearchFragment : Fragment() {
             object : SearchAdapter.OnItemClickListener {
                 // 최근 검색 리사이클러뷰 data 클릭 리스너
                 override fun OnItemClick(position: Int) {
-                    placeAdapter = PlaceAdapter(placeDatas)
                     binding.recyclerView.adapter = placeAdapter
 
                     // RecyclerView를 처음에는 숨김(GONE) 상태로 설정
@@ -119,7 +110,6 @@ class SearchFragment : Fragment() {
                     // 마지막 data까지 삭제하면 마지막 구분선 제거
                     if(datas.isEmpty()) {
                         binding.lastDivider.visibility = View.GONE
-                        //binding.recentRecord.visibility = View.GONE
                     }
                 }
             }
@@ -163,7 +153,6 @@ class SearchFragment : Fragment() {
                 searchEditText = binding.searchText
                 searchBtnInplacelist = binding.searchBtn
 
-                placeAdapter = PlaceAdapter(placeDatas)
                 binding.recyclerView.adapter = placeAdapter
 
                 // RecyclerView를 처음에는 숨김(GONE) 상태로 설정
@@ -185,9 +174,6 @@ class SearchFragment : Fragment() {
                         datas.remove(searchText)
                     datas.add(0, searchText)
                     searchAdapter.notifyDataSetChanged()
-
-                    // 검색 버튼 클릭 시 Fragment의 가시성 변경을 알림
-                    //visibilityListener?.onFragmentVisibilityChanged(true)
 
                     // 검색 버튼 클릭 시 리사이클러뷰를 보이도록 변경
                     binding.recyclerView.visibility = View.VISIBLE
@@ -213,7 +199,6 @@ class SearchFragment : Fragment() {
 
     private fun initPlaceRecycler() {
         // 어댑터에 데이터 설정
-        placeAdapter = PlaceAdapter(placeDatas)
         binding.recyclerView.adapter = placeAdapter
 
         placeAdapter.datas = placeDatas
