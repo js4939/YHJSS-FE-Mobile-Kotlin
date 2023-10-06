@@ -5,6 +5,7 @@ import com.example.yeohangjissokssok.activity.PlaceResponse
 import com.example.yeohangjissokssok.databinding.PlaceRecyclerBinding
 import com.example.yeohangjissokssok.databinding.ReviewRecyclerBinding
 import com.example.yeohangjissokssok.models.ReviewResponse
+import kotlinx.coroutines.NonDisposableHandle.parent
 
 class ReviewAdapter(var datas: ArrayList<ReviewResponse>)
     : RecyclerView.Adapter<ReviewAdapter.ViewHolder>(){
@@ -15,6 +16,11 @@ class ReviewAdapter(var datas: ArrayList<ReviewResponse>)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = ReviewRecyclerBinding.inflate(LayoutInflater.from(parent.context))
+        val layoutParams = RecyclerView.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        view.root.layoutParams = layoutParams
         return ViewHolder(view)
     }
 
@@ -31,4 +37,5 @@ class ReviewAdapter(var datas: ArrayList<ReviewResponse>)
         holder.binding.reviewDate.text = datas[position].date
         holder.binding.reviewContent.text = datas[position].content
     }
+
 }
