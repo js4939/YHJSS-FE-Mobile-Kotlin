@@ -35,8 +35,10 @@ class ResultActivity : AppCompatActivity() {
     lateinit var binding: ActivityResultBinding
     lateinit var adapter: ReviewAdapter
 
-    var placeId: Long = 0
-    var saPlaceId: Long = 0
+    var placeId: Long = -1
+    var saPlaceId: Long = -1
+    var monthId: Long = -1
+    var category: String = "C001"
 
     val datas = ArrayList<ReviewResponse>()
 
@@ -75,7 +77,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     // 카테고리 별 리뷰 불러오는 메소드
-    private fun getPlaceReviews(category: String, callback: (List<ReviewResponse>) -> Unit) {
+    private fun getPlaceReviews(callback: (List<ReviewResponse>) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             RetrofitBuilder.api.getReviews(saPlaceId, category).enqueue(object : Callback<APIResponseData> {
                 override fun onResponse(
@@ -100,9 +102,9 @@ class ResultActivity : AppCompatActivity() {
     }
 
     // 월 별 리뷰 불러오는 메소드
-    private fun getPlaceMonthReviews(category: String, callback: (List<ReviewResponse>) -> Unit) {
+    private fun getPlaceMonthReviews(id: Long, callback: (List<ReviewResponse>) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
-            RetrofitBuilder.api.getMonthReviews(saPlaceId, category).enqueue(object : Callback<APIResponseData> {
+            RetrofitBuilder.api.getMonthReviews(id, category).enqueue(object : Callback<APIResponseData> {
                 override fun onResponse(
                     call: Call<APIResponseData>, response: Response<APIResponseData>
                 ) {
@@ -174,26 +176,14 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun setContents() {
-//        var id = intent?.getStringExtra("id")!!.toLong()
-//
-//        if(id != null){
-//            Log.d("check", "NOT NULL")
-//            getReviewsById(id){
-//                    result ->
-//                datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
-//                datas.addAll(result)
-//                adapter.notifyDataSetChanged()
-//            }
-//        }
-    }
-
     // 사진 설정 메소드
     private fun setPlaceImg(url: String){
         Glide.with(this)
             .load(url)      // 이미지 url
             .placeholder(R.drawable.baseline_update_24)  // 로딩 이미지
             .error(R.drawable.baseline_error_24)    // 에러 이미지
+            .override(350, 200)
+            .centerCrop()
             .into(binding.placeImg)     // 이미지 띄울 위치
     }
 
@@ -205,11 +195,13 @@ class ResultActivity : AppCompatActivity() {
                 // 클릭한 장소 정보로 화면 설정
                 binding.placeName.text = result.name
                 setPlaceImg(result.photoUrl)
+            Log.d("place id", placeId.toString())
         }
 
         getPlaceSAResult(placeId) {
             result ->
             saPlaceId = result[0].samonthlysummary_id
+            Log.d("SA place id", saPlaceId.toString())
 
             binding.apply {
                 // "분위기" 카테고리 내용으로 비율 초기화
@@ -223,9 +215,9 @@ class ResultActivity : AppCompatActivity() {
         adapter = ReviewAdapter(this.datas)
         binding.recyclerView.adapter = adapter
 
-        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 1))
-        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 2))
-        datas.add(ReviewResponse(0, "풍경이 예쁘고\n 교통이 편리해요", 0))
+        datas.add(ReviewResponse(0, "2020년 3월", "풍경이 예쁘고\n 교통이 편리해요", 1))
+        datas.add(ReviewResponse(0, "2020년 3월", "풍경이 예쁘고\n 교통이 편리해요", 2))
+        datas.add(ReviewResponse(0, "2020년 3월", "풍경이 예쁘고\n 교통이 편리해요", 0))
 
         adapter.datas = datas
 
@@ -272,19 +264,31 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun setReviews(category: String){
+    private fun setReviews(){
         binding.apply{
-            getPlaceReviews(category){
-                result ->
+            getPlaceReviews() { result ->
                 Log.d("reviews", result.toString())
 
-                    datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
-                    datas.addAll(result)
-                    if(result == null){
+                datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+                datas.addAll(result)
+                if (result == null) {
 
-                    }
-                    adapter.notifyDataSetChanged()
+                }
+                adapter.notifyDataSetChanged()
             }
+        }
+    }
+
+    private fun setMonthlyReviews(id: Long){
+        getPlaceMonthReviews(id) { result ->
+            Log.d("reviews", result.toString())
+
+            datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+            datas.addAll(result)
+            if (result == null) {
+
+            }
+            adapter.notifyDataSetChanged()
         }
     }
 
@@ -310,7 +314,14 @@ class ResultActivity : AppCompatActivity() {
                     NeuPercent.text = round(neu).toInt().toString() + "%"
 
                     // 리뷰 불러오기
-                    setReviews("C001")
+                    if(category != "C001" && monthId == -1.toLong()){
+                        category = "C001"
+                        setReviews()
+                    }
+                    else if(monthId != -1.toLong()){
+                        category = "C001"
+                        setMonthlyReviews(monthId)
+                    }
                 }
 
                 R.id.radioButton2 -> {
@@ -332,7 +343,14 @@ class ResultActivity : AppCompatActivity() {
                     NeuPercent.text = round(neu).toInt().toString() + "%"
 
                     // 리뷰 불러오기
-                    setReviews("C002")
+                    if(category != "C002" && monthId == -1.toLong()){
+                        category = "C002"
+                        setReviews()
+                    }
+                    else if(monthId != -1.toLong()){
+                        category = "C002"
+                        setMonthlyReviews(monthId)
+                    }
                 }
 
                 R.id.radioButton3 -> {
@@ -354,7 +372,14 @@ class ResultActivity : AppCompatActivity() {
                     NeuPercent.text = round(neu).toInt().toString() + "%"
 
                     // 리뷰 불러오기
-                    setReviews("C003")
+                    if(category != "C003" && monthId == -1.toLong()){
+                        category = "C003"
+                        setReviews()
+                    }
+                    else if(monthId != -1.toLong()){
+                        category = "C003"
+                        setMonthlyReviews(monthId)
+                    }
                 }
 
                 R.id.radioButton4 -> {
@@ -376,7 +401,14 @@ class ResultActivity : AppCompatActivity() {
                     NeuPercent.text = round(neu).toInt().toString() + "%"
 
                     // 리뷰 불러오기
-                    setReviews("C004")
+                    if(category != "C004" && monthId == -1.toLong()){
+                        category = "C004"
+                        setReviews()
+                    }
+                    else if(monthId != -1.toLong()){
+                        category = "C004"
+                        setMonthlyReviews(monthId)
+                    }
                 }
             }
         }
@@ -408,7 +440,10 @@ class ResultActivity : AppCompatActivity() {
                         0 -> {
                             getPlaceSAResult(placeId){
                                     result ->
+                                monthId = -1
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setReviews()
                             }
                         }
 
@@ -416,7 +451,10 @@ class ResultActivity : AppCompatActivity() {
                         1 -> {
                             getPlaceMonthlySAResult(placeId, 1){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -424,7 +462,10 @@ class ResultActivity : AppCompatActivity() {
                         2 -> {
                             getPlaceMonthlySAResult(placeId, 2){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -432,7 +473,10 @@ class ResultActivity : AppCompatActivity() {
                         3 -> {
                             getPlaceMonthlySAResult(placeId, 3){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -440,7 +484,10 @@ class ResultActivity : AppCompatActivity() {
                         4 -> {
                             getPlaceMonthlySAResult(placeId, 4){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -448,7 +495,10 @@ class ResultActivity : AppCompatActivity() {
                         5 -> {
                             getPlaceMonthlySAResult(placeId, 5){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -456,7 +506,10 @@ class ResultActivity : AppCompatActivity() {
                         6 -> {
                             getPlaceMonthlySAResult(placeId, 6){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -464,7 +517,10 @@ class ResultActivity : AppCompatActivity() {
                         7 -> {
                             getPlaceMonthlySAResult(placeId, 7){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -472,7 +528,10 @@ class ResultActivity : AppCompatActivity() {
                         8 -> {
                             getPlaceMonthlySAResult(placeId, 8){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -480,7 +539,10 @@ class ResultActivity : AppCompatActivity() {
                         9 -> {
                             getPlaceMonthlySAResult(placeId, 9){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -488,15 +550,21 @@ class ResultActivity : AppCompatActivity() {
                         10 -> {
                             getPlaceMonthlySAResult(placeId, 10){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
                         // 11월
                         11 -> {
-                            getPlaceMonthlySAResult(placeId, 12){
+                            getPlaceMonthlySAResult(placeId, 11){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
 
@@ -504,7 +572,10 @@ class ResultActivity : AppCompatActivity() {
                         12 -> {
                             getPlaceMonthlySAResult(placeId, 12){
                                     result ->
+                                monthId = result[0].samonthlysummary_id
+                                initClickEvent(result)
                                 setRadioButton(result)
+                                setMonthlyReviews(monthId)
                             }
                         }
                     }
