@@ -1,6 +1,8 @@
 package com.example.yeohangjissokssok.fragment
 
 import PlaceAdapter
+import android.content.Intent
+import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -27,14 +29,13 @@ import retrofit2.Response
 
 class RecommendFragment : Fragment() {
 
-    lateinit var placeAdapter : PlaceAdapter
-
     // 바인딩 객체 선언
     private lateinit var binding: FragmentRecommendBinding
 
     var caPlaceIds = mutableListOf<Long>()
 
     val datas = ArrayList<PlaceResponse>()
+    val placeAdapter = PlaceAdapter(datas)
 
     var placeId = 3
     var region = "region"
@@ -58,7 +59,6 @@ class RecommendFragment : Fragment() {
     )
 
     val buttonAdapter = ButtonAdapter(buttonDataList)
-
 
     private fun getSACategoryPlace(input: String) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -124,6 +124,7 @@ class RecommendFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         binding = FragmentRecommendBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -272,7 +273,6 @@ class RecommendFragment : Fragment() {
                     }
                 }
             })
-
         }
 
         // 초기 카테고리 설정 (예: "C001")
@@ -298,7 +298,7 @@ class RecommendFragment : Fragment() {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
-        placeAdapter = PlaceAdapter(datas)
+        //placeAdapter = PlaceAdapter(datas)
         binding.rvRecommendlist.adapter = placeAdapter
 
         for (placeId in caPlaceIds) {
@@ -329,20 +329,19 @@ class RecommendFragment : Fragment() {
             //                requireActivity().onBackPressed() // 현재 Fragment를 스택에서 제거
             //            }
 
-
             // adapter에 클릭리스너 부착
             // 여행지 클릭 시 이벤트
-            //placeAdapter.itemClicklistener =
-//                object : PlaceRecommendAdapter.OnItemClickListener {
-//                    override fun OnItemClick(position: Int) {
-//                        // RecommendListFragment를 호스팅하는 Activity에서 다른 Activity로 전환
-//                        val intent = Intent(requireActivity(), ResultActivity::class.java)
-//                        intent.putExtra("placeId", placeAdapterRecommend.datas[position].placeId)
-//                        intent.putExtra("region", placeAdapterRecommend.datas[position].region)
-//                        intent.putExtra("name", placeAdapterRecommend.datas[position].name)
+            placeAdapter.itemClicklistener =
+                object : PlaceAdapter.OnItemClickListener {
+                    override fun OnItemClick(position: Int) {
+                        // RecommendListFragment를 호스팅하는 Activity에서 다른 Activity로 전환
+                        val intent = Intent(requireActivity(), ResultActivity::class.java)
+                        intent.putExtra("placeId", placeAdapter.datas[position].id)
+                        intent.putExtra("region", placeAdapter.datas[position].region)
+                        intent.putExtra("name", placeAdapter.datas[position].name)
 //                        intent.putExtra(
 //                            "positiveNumber",
-//                            placeAdapterRecommend.datas[position].positiveNumber
+//                            placeAdapter.datas[position].
 //                        )
 //                        intent.putExtra(
 //                            "totalNumber",
@@ -352,10 +351,10 @@ class RecommendFragment : Fragment() {
 //                            "proportion",
 //                            placeAdapterRecommend.datas[position].proportion
 //                        )
-//                        intent.putExtra("page", "placeList")
-//                        startActivity(intent)
-//                    }
-//                }
+                        intent.putExtra("page", "placeList")
+                        startActivity(intent)
+                    }
+                }
         }
     }
 }
