@@ -75,7 +75,7 @@
 
     <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         tools:ignore="MissingConstraints"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="1dp"
@@ -88,15 +88,29 @@
             android:layout_height="20dp"
             android:src="@drawable/ic_rv_positive"
             />
+        <ProgressBar
+            android:id="@+id/PosBar_rv"
+            android:layout_width="120dp"
+            android:layout_height="12dp"
+            android:layout_weight="20"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:max="100"
+            android:progress="50"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/progressbar_highest" />
+
         <TextView
-            android:id="@+id/tv_rv_positive"
-            android:layout_width="wrap_content"
+            android:id="@+id/PosPercent_rv"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:text="100% (40)"
-            android:textSize="12sp"
-            android:textColor="@color/black"
-            android:layout_marginLeft="3dp"
-            />
+            android:layout_weight="1"
+            android:layout_marginTop="4dp"
+            android:text="100%"
+            android:textAlignment="center"
+            android:textColor="@color/textColor"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
