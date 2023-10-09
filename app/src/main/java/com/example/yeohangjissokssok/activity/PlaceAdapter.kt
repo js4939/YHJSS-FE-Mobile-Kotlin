@@ -5,9 +5,17 @@ import com.bumptech.glide.Glide
 import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.activity.PlaceResponse
 import com.example.yeohangjissokssok.databinding.PlaceRecyclerBinding
+import com.example.yeohangjissokssok.models.SAPlaceResponse
+import kotlin.math.round
 
-class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
+class PlaceAdapter(
+    var datas: ArrayList<PlaceResponse>
+)
     : RecyclerView.Adapter<PlaceAdapter.ViewHolder>(){
+
+    // totalnum과 positivenum을 저장할 변수
+    private var totalnum: Int = 0
+    private var pos: Double = 0.0
 
     interface OnItemClickListener{
         fun OnItemClick(position:Int)
@@ -32,6 +40,11 @@ class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
         return ViewHolder(view)
     }
 
+    fun setTotalAndPositiveNum(total: Int, positive: Double) {
+        totalnum = total
+        pos = positive
+    }
+
     override fun getItemCount(): Int {
         return datas.size
     }
@@ -52,6 +65,9 @@ class PlaceAdapter(var datas: ArrayList<PlaceResponse>)
         holder.binding.tvRvPlacename.text = datas[position].name
         holder.binding.tvRvPlacelocation.text = datas[position].region
         holder.binding.tvRvLocation.text = datas[position].address
+        holder.binding.PosBarRv.progress = round(pos).toInt()
+        holder.binding.PosPercentRv.text = round(pos).toInt().toString() + "% (" + totalnum + ")"
+
     }
 
 }

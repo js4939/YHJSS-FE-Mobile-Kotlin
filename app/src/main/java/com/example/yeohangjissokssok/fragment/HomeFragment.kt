@@ -38,17 +38,14 @@ class HomeFragment : Fragment() {
     var caPlaceIds = mutableListOf<Long>()
 
     val datas = ArrayList<PlaceResponse>()
-    val placeAdapter = PlaceAdapter(datas)
+    var placeAdapter = PlaceAdapter(datas)
 
-    var placeId = 3
-    var region = "region"
+    var categorynum = 0
+
     val name = "name"
-    val positiveNumber = 1
-    val totalNumber = 1
-    val proportion = 0.001
 
-    private var selectedImageResource: Int = 0
-    private var selectedButtonIndex: Int = -1
+    private var totalnum: Int = 0
+    private var pos: Double = 0.0
 
     private fun getMonthSACategoryPlace(input: String) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -108,6 +105,31 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun getPlaceSAResult(id: Long, callback: (List<SAPlaceResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getSAPlace(id).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<SAPlaceResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<SAPlaceResponse>::class.java)
+                            .toList()
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                        //Log.d("saresult", result.toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -130,34 +152,36 @@ class HomeFragment : Fragment() {
             radioButton1.setOnClickListener {
                 // 분위기 선택 시
                 category = "C001"
+                categorynum = 0
                 updateRecyclerView(category)
             }
 
             radioButton2.setOnClickListener {
                 // 교통 선택 시
                 category = "C002"
+                categorynum = 1
                 updateRecyclerView(category)
             }
 
             radioButton3.setOnClickListener {
                 // 혼잡도 선택 시
                 category = "C003"
+                categorynum = 2
                 updateRecyclerView(category)
             }
 
             radioButton4.setOnClickListener {
                 // 인프라 선택 시
                 category = "C004"
+                categorynum = 3
                 updateRecyclerView(category)
             }
         }
 
         // 초기 카테고리 설정 (예: "C001")
         val initialCategory = "C001"
+        categorynum = 0
         updateRecyclerView(initialCategory)
-
-        //placeAdapterRecommend = PlaceRecommendAdapter(this.datas)
-        //binding.rvPlace.adapter = placeAdapterRecommend
 
         // 리사이클러뷰 구분선 지정
         val dividerItemDecoration =
@@ -179,27 +203,50 @@ class HomeFragment : Fragment() {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
-        //placeAdapter = PlaceAdapter(datas)
         binding.rvPlace.adapter = placeAdapter
 
-        for (placeId in caPlaceIds) {
-            getPlaceById(placeId) { result ->
-                val newPlaceResponse = PlaceResponse(
-                    id = result.id,
-                    name = result.name,
-                    region = result.region,
-                    address = result.address,
-                    latitude = result.latitude,
-                    longitude = result.longitude,
-                    photoUrl = result.photoUrl
-                )
+        var currentIndex = 0
 
-                datas.add(newPlaceResponse)
-                placeAdapter.notifyDataSetChanged()
-                //Log.d("carecycler", result.toString())
+        fun addNextPlace() {
+            if (currentIndex < caPlaceIds.size) {
+                val placeId = caPlaceIds[currentIndex]
+
+                // 데이터 가져오기
+                getPlaceSAResult(placeId) { result ->
+                    totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
+                    pos = result[categorynum].positive.toDouble() / totalnum * 100
+
+                    placeAdapter.setTotalAndPositiveNum(totalnum, pos)
+
+                    // 장소 정보 가져오기
+                    getPlaceById(placeId) { placeResult ->
+                        val newPlaceResponse = PlaceResponse(
+                            id = placeResult.id,
+                            name = placeResult.name,
+                            region = placeResult.region,
+                            address = placeResult.address,
+                            latitude = placeResult.latitude,
+                            longitude = placeResult.longitude,
+                            photoUrl = placeResult.photoUrl
+                        )
+
+                        datas.add(newPlaceResponse)
+                        placeAdapter.notifyItemInserted(datas.size - 1)
+
+                        currentIndex++ // 다음 장소를 가져오기 위해 인덱스 증가
+                        addNextPlace() // 다음 장소를 가져오도록 재귀 호출
+                    }
+                }
             }
         }
+
+        // 첫 번째 장소를 가져오기 위해 호출
+        addNextPlace()
     }
+
+
+
+
 
     private fun initClickEvent() {
         binding.apply {
