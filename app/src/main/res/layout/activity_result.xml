@@ -219,14 +219,17 @@
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:text="긍정" />
-                    <TextView
+                    <ProgressBar
                         android:id="@+id/PosBar"
                         android:layout_width="0dp"
                         android:layout_height="12dp"
                         android:layout_weight="7"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/positive_bar" />
+                        android:max="100"
+                        android:progress="50"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:progressDrawable="@drawable/progressbar_highest" />
                     <TextView
                         android:id="@+id/PosPercent"
                         android:layout_width="0dp"
@@ -256,14 +259,17 @@
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:text="부정" />
-                    <TextView
+                    <ProgressBar
                         android:id="@+id/NegBar"
                         android:layout_width="0dp"
                         android:layout_height="12dp"
                         android:layout_weight="7"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/positive_bar" />
+                        android:max="100"
+                        android:progress="50"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:progressDrawable="@drawable/progressbar_highest" />
                     <TextView
                         android:id="@+id/NegPercent"
                         android:layout_width="0dp"
@@ -293,14 +299,17 @@
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:text="중립" />
-                    <TextView
+                    <ProgressBar
                         android:id="@+id/NeuBar"
                         android:layout_width="0dp"
                         android:layout_height="12dp"
                         android:layout_weight="7"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/positive_bar" />
+                        android:max="100"
+                        android:progress="50"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:progressDrawable="@drawable/progressbar_highest" />
                     <TextView
                         android:id="@+id/NeuPercent"
                         android:layout_width="0dp"

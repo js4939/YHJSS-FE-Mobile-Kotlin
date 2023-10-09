@@ -2,11 +2,9 @@ package com.example.yeohangjissokssok.activity
 
 import PlaceAdapter
 import ReviewAdapter
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -16,8 +14,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.yeohangjissokssok.R
+import com.example.yeohangjissokssok.R.id.fragment_home
+import com.example.yeohangjissokssok.R.id.fragment_recommend
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.ActivityResultBinding
+import com.example.yeohangjissokssok.fragment.HomeFragment
+import com.example.yeohangjissokssok.fragment.RecommendFragment
 import com.example.yeohangjissokssok.models.ReviewResponse
 import com.example.yeohangjissokssok.models.SAPlaceResponse
 import com.google.gson.Gson
@@ -234,15 +236,27 @@ class ResultActivity : AppCompatActivity() {
         binding.apply{
             goBackBtn.setOnClickListener {
                 // 뒤로가기 버튼 클릭 시 이벤트
-//                lateinit var intent: Intent
-//                var previousPage = intent.getStringExtra("page") as String
-//                if(previousPage=="placeList"){
-//                    intent = Intent(this@ResultActivity, PlaceListActivity::class.java)
-//                }
-//                else if(previousPage=="recommendList"){
-//                    intent = Intent(this@ResultActivity, RecommendListActivity::class.java)
-//                }
-//                startActivity(intent)
+                val previousPage = intent.getStringExtra("page") as String
+                Log.d("back", previousPage)
+
+                if (previousPage == "recommend") {
+                    val fragment = RecommendFragment()
+                    val fragmentManager = ResultActivity().supportFragmentManager
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+
+                    fragmentTransaction.replace(fragment_recommend, RecommendFragment())
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+                }
+                else if(previousPage == "home") {
+                    val fragment =  HomeFragment()
+                    val fragmentManager = ResultActivity().supportFragmentManager
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+
+                    fragmentTransaction.replace(fragment_home, HomeFragment())
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+                }
             }
 
 //            mapBtn.setOnClickListener {
@@ -313,6 +327,10 @@ class ResultActivity : AppCompatActivity() {
                     NegPercent.text = round(neg).toInt().toString() + "%"
                     NeuPercent.text = round(neu).toInt().toString() + "%"
 
+                    PosBar.progress = round(pos).toInt()
+                    NegBar.progress = round(neg).toInt()
+                    NeuBar.progress = round(neu).toInt()
+
                     // 리뷰 불러오기
                     if(category != "C001" && monthId == -1.toLong()){
                         category = "C001"
@@ -341,6 +359,10 @@ class ResultActivity : AppCompatActivity() {
                     PosPercent.text = round(pos).toInt().toString() + "%"
                     NegPercent.text = round(neg).toInt().toString() + "%"
                     NeuPercent.text = round(neu).toInt().toString() + "%"
+
+                    PosBar.progress = round(pos).toInt()
+                    NegBar.progress = round(neg).toInt()
+                    NeuBar.progress = round(neu).toInt()
 
                     // 리뷰 불러오기
                     if(category != "C002" && monthId == -1.toLong()){
@@ -371,6 +393,10 @@ class ResultActivity : AppCompatActivity() {
                     NegPercent.text = round(neg).toInt().toString() + "%"
                     NeuPercent.text = round(neu).toInt().toString() + "%"
 
+                    PosBar.progress = round(pos).toInt()
+                    NegBar.progress = round(neg).toInt()
+                    NeuBar.progress = round(neu).toInt()
+
                     // 리뷰 불러오기
                     if(category != "C003" && monthId == -1.toLong()){
                         category = "C003"
@@ -399,6 +425,10 @@ class ResultActivity : AppCompatActivity() {
                     PosPercent.text = round(pos).toInt().toString() + "%"
                     NegPercent.text = round(neg).toInt().toString() + "%"
                     NeuPercent.text = round(neu).toInt().toString() + "%"
+
+                    PosBar.progress = round(pos).toInt()
+                    NegBar.progress = round(neg).toInt()
+                    NeuBar.progress = round(neu).toInt()
 
                     // 리뷰 불러오기
                     if(category != "C004" && monthId == -1.toLong()){
