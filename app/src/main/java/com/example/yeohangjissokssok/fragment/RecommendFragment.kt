@@ -2,7 +2,6 @@ package com.example.yeohangjissokssok.fragment
 
 import PlaceAdapter
 import android.content.Intent
-import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -76,7 +75,7 @@ class RecommendFragment : Fragment() {
                             .create()
                             .fromJson(jsonResult, Array<SACategoryResponse>::class.java)
                             .toList()
-                        Log.d("result", result.toString())
+                        //Log.d("result", result.toString())
 
                         // 받아온 placeId를 caPlaceIds 리스트에 추가
                         caPlaceIds.clear()
@@ -85,7 +84,7 @@ class RecommendFragment : Fragment() {
                         }
 
                         // initRecycler 함수를 호출하여 데이터 추가
-                        initRecycler()
+                        initRecycler(input)
                     }
                 }
 
@@ -325,7 +324,7 @@ class RecommendFragment : Fragment() {
         getSACategoryPlace(category)
     }
 
-    private fun initRecycler() {
+    private fun initRecycler(input: String) {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
@@ -339,6 +338,20 @@ class RecommendFragment : Fragment() {
 
                 // 데이터 가져오기
                 getPlaceSAResult(placeId) { result ->
+                    if (input == "C001"){
+                        categorynum = 0
+                    }
+                    else if (input == "C002"){
+                        categorynum = 1
+                    }
+                    else if (input == "C003"){
+                        categorynum = 2
+                    }
+                    else if (input == "C004"){
+                        categorynum = 3
+                    }
+
+                    //Log.d("categoorynum", categorynum.toString())
                     totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
                     pos = result[categorynum].positive.toDouble() / totalnum * 100
 
@@ -368,9 +381,9 @@ class RecommendFragment : Fragment() {
 
         // 첫 번째 장소를 가져오기 위해 호출
         addNextPlace()
+
+        //placeAdapter.notifyDataSetChanged()
     }
-
-
 
     private fun initClickEvent() {
         binding.apply {

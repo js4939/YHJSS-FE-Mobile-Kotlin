@@ -27,8 +27,6 @@ import retrofit2.Response
 import java.time.LocalDate
 
 class HomeFragment : Fragment() {
-    //lateinit var placeAdapter : PlaceAdapter
-
     // 바인딩 객체 선언
     private lateinit var binding: FragmentHomeBinding
 
@@ -62,7 +60,7 @@ class HomeFragment : Fragment() {
                             .create()
                             .fromJson(jsonResult, Array<SACategoryResponse>::class.java)
                             .toList()
-                        Log.d("home fragment result", result.toString())
+                        //Log.d("home fragment result", result.toString())
 
                         // 받아온 placeId를 caPlaceIds 리스트에 추가
                         caPlaceIds.clear()
@@ -71,7 +69,7 @@ class HomeFragment : Fragment() {
                         }
 
                         // initRecycler 함수를 호출하여 데이터 추가
-                        initRecycler()
+                        initRecycler(input)
                     }
                 }
 
@@ -199,7 +197,7 @@ class HomeFragment : Fragment() {
         getMonthSACategoryPlace(category)
     }
 
-    private fun initRecycler() {
+    private fun initRecycler(input: String) {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
@@ -213,6 +211,20 @@ class HomeFragment : Fragment() {
 
                 // 데이터 가져오기
                 getPlaceSAResult(placeId) { result ->
+                    if (input == "C001"){
+                        categorynum = 0
+                    }
+                    else if (input == "C002"){
+                        categorynum = 1
+                    }
+                    else if (input == "C003"){
+                        categorynum = 2
+                    }
+                    else if (input == "C004"){
+                        categorynum = 3
+                    }
+
+                    //Log.d("categoorynum", categorynum.toString())
                     totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
                     pos = result[categorynum].positive.toDouble() / totalnum * 100
 
@@ -244,14 +256,10 @@ class HomeFragment : Fragment() {
         addNextPlace()
     }
 
-
-
-
-
     private fun initClickEvent() {
         binding.apply {
-             //adapter에 클릭리스너 부착
-             //여행지 클릭 시 이벤트
+            //adapter에 클릭리스너 부착
+            //여행지 클릭 시 이벤트
             placeAdapter.itemClicklistener =
                 object : PlaceAdapter.OnItemClickListener {
                     override fun OnItemClick(position: Int) {
