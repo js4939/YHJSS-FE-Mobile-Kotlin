@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_recommend"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -34,10 +35,11 @@
                 android:id="@+id/btn_mood"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginEnd="6dp"
+                android:layout_weight="1"
                 android:clickable="true"
-                app:srcCompat="@drawable/ic_mood_selected" />
+                app:srcCompat="@drawable/ic_mood_selected"
+                tools:ignore="SpeakableTextPresentCheck" />
 
 
             <ImageView
@@ -87,7 +89,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recommendlist"
             android:layout_width="match_parent"
-            android:layout_height="552dp"
+            android:layout_height="0dp"
+            android:layout_weight="7"
             android:layout_marginBottom="5dp"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
