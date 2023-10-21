@@ -43,7 +43,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1.5"
+                android:layout_weight="1.1"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -60,7 +60,7 @@
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginTop="15dp"
                         android:layout_marginBottom="5dp"
-                        android:text="가로수길"
+                        android:text=""
                         android:textColor="@color/black"
                         android:textSize="22sp"
                         android:textStyle="bold"/>
@@ -83,11 +83,11 @@
                             android:id="@+id/placeLocation"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="6"
+                            android:layout_weight="7"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:layout_marginStart="5dp"
-                            android:text="서울 강남구 압구정로 120"
+                            android:text=""
                             android:textColor="@color/textColor"
                             android:textStyle="bold"
                             android:textSize="11sp" />
@@ -124,7 +124,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2.3"
+                android:layout_weight="2"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="10dp"
                 android:orientation="vertical">
@@ -132,9 +132,8 @@
                     android:id="@+id/radioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1.5"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="30dp"
                     android:orientation="horizontal">
 
                     <RadioButton
@@ -146,7 +145,7 @@
                         android:checked="true"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="20dp"
                         android:text="분위기"
                         android:textAlignment="center"
                         android:background="@drawable/selector_place_radio_button"
@@ -161,7 +160,7 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="20dp"
                         android:background="@drawable/selector_place_radio_button"
                         android:textColor="@drawable/selector_place_radio_text"
                         android:button="@null"
@@ -177,7 +176,7 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginRight="20dp"
                         android:background="@drawable/selector_place_radio_button"
                         android:textColor="@drawable/selector_place_radio_text"
                         android:button="@null"
@@ -208,13 +207,13 @@
                     android:layout_weight="1"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textStyle="bold"
@@ -222,10 +221,10 @@
                     <ProgressBar
                         android:id="@+id/PosBar"
                         android:layout_width="0dp"
-                        android:layout_height="12dp"
+                        android:layout_height="13dp"
                         android:layout_weight="7"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="2dp"
                         android:max="100"
                         android:progress="50"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -235,7 +234,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:layout_marginStart="10dp"
                         android:textAlignment="center"
                         android:textColor="@color/textColor"
@@ -248,13 +247,12 @@
                     android:layout_weight="1"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textStyle="bold"
@@ -262,10 +260,10 @@
                     <ProgressBar
                         android:id="@+id/NegBar"
                         android:layout_width="0dp"
-                        android:layout_height="12dp"
+                        android:layout_height="13dp"
                         android:layout_weight="7"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="2dp"
                         android:max="100"
                         android:progress="50"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -275,7 +273,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:layout_marginStart="10dp"
                         android:textAlignment="center"
                         android:textColor="@color/textColor"
@@ -288,13 +286,12 @@
                     android:layout_weight="1"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textStyle="bold"
@@ -302,10 +299,10 @@
                     <ProgressBar
                         android:id="@+id/NeuBar"
                         android:layout_width="0dp"
-                        android:layout_height="12dp"
+                        android:layout_height="13dp"
                         android:layout_weight="7"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="2dp"
                         android:max="100"
                         android:progress="50"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -315,7 +312,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:layout_marginStart="10dp"
                         android:textAlignment="center"
                         android:textColor="@color/textColor"
@@ -324,20 +321,21 @@
                 </LinearLayout>
             </LinearLayout>
             <TextView
-                android:layout_width="330dp"
+                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/defaultColor" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="3"
+                android:layout_weight="3.7"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="3dp"
                     android:text="Reviews"
                     android:textColor="@color/black"
                     android:textSize="20sp"
