@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0sp"
+    android:layout_marginBottom="10sp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/img_rv_place"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_rv_placename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="잠실야구경기장"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintLeft_toRightOf="@+id/img_rv_place"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_rv_placelocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서울 송파"
+        android:textSize="13sp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintLeft_toRightOf="@+id/img_rv_place"
+        app:layout_constraintTop_toBottomOf="@id/tv_rv_placename"
+        />
+
+    <LinearLayout
+        android:id="@+id/rv_location"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        tools:ignore="MissingConstraints"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintLeft_toRightOf="@+id/img_rv_place"
+        app:layout_constraintTop_toBottomOf="@id/tv_rv_placelocation">
+
+        <ImageView
+            android:id="@+id/img_rv_location"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_rv_location"
+            />
+        <TextView
+            android:id="@+id/tv_rv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="서울 송파구 올림픽로 19-2"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="3dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        tools:ignore="MissingConstraints"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintLeft_toRightOf="@+id/img_rv_place"
+        app:layout_constraintTop_toBottomOf="@id/rv_location">
+
+    </LinearLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
