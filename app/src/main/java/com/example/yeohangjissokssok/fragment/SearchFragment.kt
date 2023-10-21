@@ -1,6 +1,6 @@
 package com.example.yeohangjissokssok.fragment
 
-import PlaceAdapter
+import PlaceSearchAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -33,7 +33,7 @@ class SearchFragment : Fragment() {
 
     val placeDatas = ArrayList<PlaceResponse>()
     val datas = ArrayList<String>()
-    val placeAdapter = PlaceAdapter(placeDatas)
+    val placeSearchAdapter = PlaceSearchAdapter(placeDatas)
 
     var name = "name"
 
@@ -71,7 +71,7 @@ class SearchFragment : Fragment() {
             object : SearchAdapter.OnItemClickListener {
                 // 최근 검색 리사이클러뷰 data 클릭 리스너
                 override fun OnItemClick(position: Int) {
-                    binding.recyclerView.adapter = placeAdapter
+                    binding.recyclerView.adapter = placeSearchAdapter
 
                     // RecyclerView를 처음에는 숨김(GONE) 상태로 설정
                     binding.recyclerView.visibility = View.GONE
@@ -114,15 +114,15 @@ class SearchFragment : Fragment() {
                 }
             }
 
-        placeAdapter.itemClicklistener =
-            object : PlaceAdapter.OnItemClickListener {
+        placeSearchAdapter.itemClicklistener =
+            object : PlaceSearchAdapter.OnItemClickListener {
                 override fun OnItemClick(position: Int) {
                     // SearchFragment를 호스팅하는 Activity에서 다른 Activity로 전환
                     Log.d("전환", "전환")
                     val intent = Intent(requireActivity(), ResultActivity::class.java)
-                    intent.putExtra("placeId", placeAdapter.datas[position].id)
-                    intent.putExtra("region", placeAdapter.datas[position].region)
-                    intent.putExtra("name", placeAdapter.datas[position].name)
+                    intent.putExtra("placeId", placeSearchAdapter.datas[position].id)
+                    intent.putExtra("region", placeSearchAdapter.datas[position].region)
+                    intent.putExtra("name", placeSearchAdapter.datas[position].name)
                     intent.putExtra("page", "search")
                     startActivity(intent)
                 }
@@ -153,7 +153,7 @@ class SearchFragment : Fragment() {
                 searchEditText = binding.searchText
                 searchBtnInplacelist = binding.searchBtn
 
-                binding.recyclerView.adapter = placeAdapter
+                binding.recyclerView.adapter = placeSearchAdapter
 
                 // RecyclerView를 처음에는 숨김(GONE) 상태로 설정
                 binding.recyclerView.visibility = View.GONE
@@ -199,12 +199,12 @@ class SearchFragment : Fragment() {
 
     private fun initPlaceRecycler() {
         // 어댑터에 데이터 설정
-        binding.recyclerView.adapter = placeAdapter
+        binding.recyclerView.adapter = placeSearchAdapter
 
-        placeAdapter.datas = placeDatas
+        placeSearchAdapter.datas = placeDatas
 
         // RecyclerView를 갱신
-        placeAdapter.notifyDataSetChanged()
+        placeSearchAdapter.notifyDataSetChanged()
     }
 
     private fun fetchPlacesByName(searchText: String) {
@@ -212,7 +212,7 @@ class SearchFragment : Fragment() {
             // 데이터를 가져온 후 어댑터에 데이터 설정
             placeDatas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
             placeDatas.addAll(result)
-            placeAdapter.notifyDataSetChanged()
+            placeSearchAdapter.notifyDataSetChanged()
 
             // 리사이클러뷰를 보이도록 변경
             binding.recyclerView.visibility = View.VISIBLE
