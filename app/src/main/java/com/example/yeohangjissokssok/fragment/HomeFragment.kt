@@ -42,6 +42,9 @@ class HomeFragment : Fragment() {
 
     val name = "name"
 
+    var time1 : Long = 0
+    var time2 : Long = 0
+
     private var totalnum: Int = 0
     private var pos: Double = 0.0
 
@@ -118,6 +121,31 @@ class HomeFragment : Fragment() {
                             .toList()
                         callback(result) // 데이터를 가져온 후 콜백으로 전달
                         //Log.d("saresult", result.toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    // 월 별 감성분석 결과 불러오는 메소드
+    private fun getPlaceMonthlySAResult(id: Long, month: Int, callback: (List<SAPlaceResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getSAMonthPlace(id, month).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<SAPlaceResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<SAPlaceResponse>::class.java)
+                            .toList()
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
                     }
                 }
 
@@ -210,7 +238,7 @@ class HomeFragment : Fragment() {
                 val placeId = caPlaceIds[currentIndex]
 
                 // 데이터 가져오기
-                getPlaceSAResult(placeId) { result ->
+                getPlaceMonthlySAResult(placeId, month) { result ->
                     if (input == "C001"){
                         categorynum = 0
                     }
@@ -263,6 +291,8 @@ class HomeFragment : Fragment() {
             placeAdapter.itemClicklistener =
                 object : PlaceAdapter.OnItemClickListener {
                     override fun OnItemClick(position: Int) {
+                        time1 = System.currentTimeMillis()
+                        //Log.e("time1", time1.toString())
                         // HomeFragment를 호스팅하는 Activity에서 다른 Activity로 전환
                         val intent = Intent(requireActivity(), ResultActivity::class.java)
                         intent.putExtra("placeId", placeAdapter.datas[position].id)
@@ -270,6 +300,8 @@ class HomeFragment : Fragment() {
                         intent.putExtra("name", placeAdapter.datas[position].name)
                         intent.putExtra("page", "home")
                         Log.d("IntentData", "placeId: ${intent.getLongExtra("placeId", -1)}, region: ${intent.getStringExtra("region")}, name: ${intent.getStringExtra("name")}, page: ${intent.getStringExtra("page")}")
+                        time2 = System.currentTimeMillis()
+                        //Log.e("time2", time2.toString())
 
                         startActivity(intent)
                     }
