@@ -32,8 +32,13 @@ class MapActivity: AppCompatActivity() {
     }
 
     private fun initClickEvent() {
+        var id = intent.getLongExtra("placeId", 0)
+        var name = intent.getStringExtra("name")
+
         binding.goBackBtn.setOnClickListener {
             intent = Intent(this@MapActivity, ResultActivity::class.java)
+            intent.putExtra("placeId", id)
+            intent.putExtra("name", name)
             startActivity(intent)
         }
     }

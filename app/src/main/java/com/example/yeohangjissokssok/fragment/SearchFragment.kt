@@ -106,11 +106,6 @@ class SearchFragment : Fragment() {
                 // 최근 검색 리사이클러뷰 data 삭제 버튼 클릭 리스너
                 override fun DeleteClick(pos: Int) {
                     searchAdapter.removeData(pos)
-
-                    // 마지막 data까지 삭제하면 마지막 구분선 제거
-                    if(datas.isEmpty()) {
-                        binding.lastDivider.visibility = View.GONE
-                    }
                 }
             }
 
@@ -146,7 +141,6 @@ class SearchFragment : Fragment() {
             searchBtn.setOnClickListener {
                 // 첫 data 검색 시 지막 구분선 및 "최근 검색" 추가
                 if(datas.isEmpty()) {
-                    binding.lastDivider.visibility = View.VISIBLE
                     binding.recentRecord.visibility = View.VISIBLE
                 }
 

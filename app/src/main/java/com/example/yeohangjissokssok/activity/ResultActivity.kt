@@ -55,7 +55,7 @@ class ResultActivity : AppCompatActivity() {
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        try {
+/*        try {
             val information = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
             val signatures = information.signingInfo.apkContentsSigners
             for (signature in signatures) {
@@ -68,7 +68,7 @@ class ResultActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             Log.d("error", "Exception -> $e")
-        }
+        }*/
 
         initLayout()
         initSpinner()
@@ -219,6 +219,7 @@ class ResultActivity : AppCompatActivity() {
                 mIntent.putExtra("name", result.name)
                 mIntent.putExtra("lat", result.latitude)
                 mIntent.putExtra("long", result.longitude)
+                mIntent.putExtra("placeId", result.id)
 
                 // 클릭한 장소 정보로 화면 설정
                 binding.placeName.text = result.name
