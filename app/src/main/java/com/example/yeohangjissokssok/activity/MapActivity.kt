@@ -1,5 +1,6 @@
 package com.example.yeohangjissokssok.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -23,11 +24,18 @@ class MapActivity: AppCompatActivity() {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 위치 권한 허용
-        //getLocationPermission()
-
         // 클릭한 여행지로 마커 표시
         setMap()
+
+        // 뒤로가기 클릭 이벤트
+        initClickEvent()
+    }
+
+    private fun initClickEvent() {
+        binding.goBackBtn.setOnClickListener {
+            intent = Intent(this@MapActivity, ResultActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setMap() {
@@ -42,7 +50,7 @@ class MapActivity: AppCompatActivity() {
         val mapPoint = MapPoint.mapPointWithGeoCoord(lat, long)
 
         mapView.setMapCenterPoint(mapPoint, true)
-        mapView.setZoomLevel(4, true)
+        mapView.setZoomLevel(3, true)
 
         // 여행지에 대한 마커 생성
         val marker = MapPOIItem()

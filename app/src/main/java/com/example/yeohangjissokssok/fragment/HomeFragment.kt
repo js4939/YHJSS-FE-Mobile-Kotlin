@@ -2,18 +2,23 @@ package com.example.yeohangjissokssok.fragment
 
 import PlaceAdapter
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.activity.APIResponseData
 import com.example.yeohangjissokssok.activity.PlaceResponse
 import com.example.yeohangjissokssok.activity.ResultActivity
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.FragmentHomeBinding
+import com.example.yeohangjissokssok.models.PlaceData
 import com.example.yeohangjissokssok.models.SACategoryResponse
 import com.example.yeohangjissokssok.models.SAPlaceResponse
 import com.google.gson.Gson
@@ -24,6 +29,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.security.MessageDigest
 import java.time.LocalDate
 
 class HomeFragment : Fragment() {
@@ -35,7 +41,7 @@ class HomeFragment : Fragment() {
 
     var caPlaceIds = mutableListOf<Long>()
 
-    val datas = ArrayList<PlaceResponse>()
+    val datas = ArrayList<PlaceData>()
     var placeAdapter = PlaceAdapter(datas)
 
     var categorynum = 0
@@ -44,9 +50,6 @@ class HomeFragment : Fragment() {
 
     var time1 : Long = 0
     var time2 : Long = 0
-
-    private var totalnum: Int = 0
-    private var pos: Double = 0.0
 
     private fun getMonthSACategoryPlace(input: String) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -72,7 +75,7 @@ class HomeFragment : Fragment() {
                         }
 
                         // initRecycler 함수를 호출하여 데이터 추가
-                        initRecycler(input)
+                        initRecycler()
                     }
                 }
 
@@ -179,35 +182,35 @@ class HomeFragment : Fragment() {
                 // 분위기 선택 시
                 category = "C001"
                 categorynum = 0
-                updateRecyclerView(category)
+                getMonthSACategoryPlace(category)
             }
 
             radioButton2.setOnClickListener {
                 // 교통 선택 시
                 category = "C002"
                 categorynum = 1
-                updateRecyclerView(category)
+                getMonthSACategoryPlace(category)
             }
 
             radioButton3.setOnClickListener {
                 // 혼잡도 선택 시
                 category = "C003"
                 categorynum = 2
-                updateRecyclerView(category)
+                getMonthSACategoryPlace(category)
             }
 
             radioButton4.setOnClickListener {
                 // 인프라 선택 시
                 category = "C004"
                 categorynum = 3
-                updateRecyclerView(category)
+                getMonthSACategoryPlace(category)
             }
         }
 
         // 초기 카테고리 설정 (예: "C001")
         val initialCategory = "C001"
         categorynum = 0
-        updateRecyclerView(initialCategory)
+        getMonthSACategoryPlace(initialCategory)
 
         // 리사이클러뷰 구분선 지정
         val dividerItemDecoration =
@@ -220,12 +223,12 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    private fun updateRecyclerView(category: String) {
+/*    private fun updateRecyclerView(category: String) {
         // 서버와 통신하여 리사이클러뷰 데이터 업데이트
         getMonthSACategoryPlace(category)
-    }
+    }*/
 
-    private fun initRecycler(input: String) {
+    private fun initRecycler() {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
@@ -239,7 +242,7 @@ class HomeFragment : Fragment() {
 
                 // 데이터 가져오기
                 getPlaceMonthlySAResult(placeId, month) { result ->
-                    if (input == "C001"){
+/*                    if (input == "C001"){
                         categorynum = 0
                     }
                     else if (input == "C002"){
@@ -250,24 +253,20 @@ class HomeFragment : Fragment() {
                     }
                     else if (input == "C004"){
                         categorynum = 3
-                    }
+                    }*/
 
-                    //Log.d("categoorynum", categorynum.toString())
-                    totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
-                    pos = result[categorynum].positive.toDouble() / totalnum * 100
-
-                    placeAdapter.setTotalAndPositiveNum(totalnum, pos)
+                    var totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
 
                     // 장소 정보 가져오기
                     getPlaceById(placeId) { placeResult ->
-                        val newPlaceResponse = PlaceResponse(
+                        val newPlaceResponse = PlaceData(
                             id = placeResult.id,
                             name = placeResult.name,
                             region = placeResult.region,
                             address = placeResult.address,
-                            latitude = placeResult.latitude,
-                            longitude = placeResult.longitude,
-                            photoUrl = placeResult.photoUrl
+                            photoUrl = placeResult.photoUrl,
+                            pos = result[categorynum].positive.toDouble() / totalnum * 100,
+                            totalNum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
                         )
 
                         datas.add(newPlaceResponse)
