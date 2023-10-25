@@ -2,8 +2,11 @@ package com.example.yeohangjissokssok.activity
 
 import PlaceAdapter
 import ReviewAdapter
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -30,12 +33,14 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.security.MessageDigest
 import kotlin.math.round
 
 class ResultActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityResultBinding
     lateinit var adapter: ReviewAdapter
+    lateinit var mIntent: Intent
 
     var placeId: Long = -1
     var saPlaceId: Long = -1
@@ -49,6 +54,21 @@ class ResultActivity : AppCompatActivity() {
 
         binding = ActivityResultBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        try {
+            val information = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            val signatures = information.signingInfo.apkContentsSigners
+            for (signature in signatures) {
+                val md = MessageDigest.getInstance("SHA").apply {
+                    update(signature.toByteArray())
+                }
+                val HASH_CODE = String(Base64.encode(md.digest(), 0))
+
+                Log.d("hash", "HASH_CODE -> $HASH_CODE")
+            }
+        } catch (e: Exception) {
+            Log.d("error", "Exception -> $e")
+        }
 
         initLayout()
         initSpinner()
@@ -194,16 +214,22 @@ class ResultActivity : AppCompatActivity() {
 
         getPlaceById(placeId) {
             result ->
+                // map activity로 정보 전달
+                mIntent = Intent(this@ResultActivity, MapActivity::class.java)
+                mIntent.putExtra("name", result.name)
+                mIntent.putExtra("lat", result.latitude)
+                mIntent.putExtra("long", result.longitude)
+
                 // 클릭한 장소 정보로 화면 설정
                 binding.placeName.text = result.name
+                binding.placeLocation.text = result.address
                 setPlaceImg(result.photoUrl)
-            Log.d("place id", placeId.toString())
         }
 
         getPlaceSAResult(placeId) {
             result ->
             saPlaceId = result[0].samonthlysummary_id
-            Log.d("SA place id", saPlaceId.toString())
+            Log.d("SA Result", result.toString())
 
             binding.apply {
                 // "분위기" 카테고리 내용으로 비율 초기화
@@ -216,10 +242,6 @@ class ResultActivity : AppCompatActivity() {
 
         adapter = ReviewAdapter(this.datas)
         binding.recyclerView.adapter = adapter
-
-        datas.add(ReviewResponse(0, "2020년 3월", "풍경이 예쁘고\n 교통이 편리해요", 1))
-        datas.add(ReviewResponse(0, "2020년 3월", "풍경이 예쁘고\n 교통이 편리해요", 2))
-        datas.add(ReviewResponse(0, "2020년 3월", "풍경이 예쁘고\n 교통이 편리해요", 0))
 
         adapter.datas = datas
 
@@ -259,9 +281,10 @@ class ResultActivity : AppCompatActivity() {
                 }
             }
 
-//            mapBtn.setOnClickListener {
-//                // 지도 버튼 클릭 시 이벤트
-//            }
+            mapBtn.setOnClickListener {
+                // 지도 버튼 클릭 시 이벤트
+                startActivity(mIntent)
+            }
 
             radioButton1.setOnClickListener {
                 setRadioButton(result)
@@ -308,6 +331,7 @@ class ResultActivity : AppCompatActivity() {
 
     private fun setRadioButton(result: List<SAPlaceResponse>){
         binding.apply {
+            Log.d("SA Result", result.toString())
             when(radioGroup.checkedRadioButtonId){
                 R.id.radioButton1 -> {
                     // 분위기 선택 시

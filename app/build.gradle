@@ -65,8 +65,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
 
-    // 네이버 지도 SDK
-    //implementation "com.naver.maps:map-sdk:3.16.2"
+    // 카카오 맵 API
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/libDaumMapAndroid.jar')
 
     //위치권한 요청
     //implementation 'io.github.ParkSangGwon:tedpermission-rx3:3.3.0'
