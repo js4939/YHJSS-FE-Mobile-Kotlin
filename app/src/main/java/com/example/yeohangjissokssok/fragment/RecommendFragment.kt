@@ -16,6 +16,7 @@ import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.activity.*
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.FragmentRecommendBinding
+import com.example.yeohangjissokssok.models.PlaceData
 import com.example.yeohangjissokssok.models.SACategoryResponse
 import com.example.yeohangjissokssok.models.SAPlaceResponse
 import com.google.gson.Gson
@@ -34,7 +35,7 @@ class RecommendFragment : Fragment() {
 
     var caPlaceIds = mutableListOf<Long>()
 
-    val datas = ArrayList<PlaceResponse>()
+    val datas = ArrayList<PlaceData>()
     var placeAdapter = PlaceAdapter(datas)
 
     var categorynum = 0
@@ -43,9 +44,6 @@ class RecommendFragment : Fragment() {
 
     private var selectedImageResource: Int = 0
     private var selectedButtonIndex: Int = -1
-
-    private var totalnum: Int = 0
-    private var pos: Double = 0.0
 
     var isMoodClicked = false
     var isTransportClicked = false
@@ -351,22 +349,18 @@ class RecommendFragment : Fragment() {
                         categorynum = 3
                     }
 
-                    //Log.d("categoorynum", categorynum.toString())
-                    totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
-                    pos = result[categorynum].positive.toDouble() / totalnum * 100
-
-                    placeAdapter.setTotalAndPositiveNum(totalnum, pos)
+                    var totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
 
                     // 장소 정보 가져오기
                     getPlaceById(placeId) { placeResult ->
-                        val newPlaceResponse = PlaceResponse(
+                        val newPlaceResponse = PlaceData(
                             id = placeResult.id,
                             name = placeResult.name,
                             region = placeResult.region,
                             address = placeResult.address,
-                            latitude = placeResult.latitude,
-                            longitude = placeResult.longitude,
-                            photoUrl = placeResult.photoUrl
+                            photoUrl = placeResult.photoUrl,
+                            pos = result[categorynum].positive.toDouble() / totalnum * 100,
+                            totalNum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
                         )
 
                         datas.add(newPlaceResponse)
@@ -414,7 +408,7 @@ class RecommendFragment : Fragment() {
 //                            "proportion",
 //                            placeAdapterRecommend.datas[position].proportion
 //                        )
-                        intent.putExtra("page", "placeList")
+                        intent.putExtra("page", "recommend")
                         startActivity(intent)
                     }
                 }
