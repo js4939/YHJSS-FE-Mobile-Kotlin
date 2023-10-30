@@ -3,6 +3,7 @@ package com.example.yeohangjissokssok.fragment
 import PlaceSearchAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,7 @@ class SearchFragment : Fragment() {
 
     val placeDatas = ArrayList<PlaceResponse>()
     val datas = ArrayList<String>()
-    val placeSearchAdapter = PlaceSearchAdapter(placeDatas)
+    var placeSearchAdapter = PlaceSearchAdapter(placeDatas)
 
     var name = "name"
 
@@ -52,6 +53,7 @@ class SearchFragment : Fragment() {
         val view = binding.root
 
         datas.add("종로")
+        datas.add("수원")
         datas.add("서울")
 
         // 검색 버튼 누르기 전 최근 검색 화면
@@ -81,9 +83,10 @@ class SearchFragment : Fragment() {
                     binding.recyclerView.addItemDecoration(dividerItemDecoration)
 
                     var searchText = searchAdapter.datas[position]
-                    Log.d("data", searchText)
+
                     if (searchText.isNotEmpty()) {
                         fetchPlacesByName(searchText)
+
                         initPlaceRecycler()
 
                         binding.searchText.setText(searchText)
@@ -97,6 +100,11 @@ class SearchFragment : Fragment() {
 
                         // 리사이클러뷰를 보이도록 변경
                         binding.recyclerView.visibility = View.VISIBLE
+                    }
+                    else {
+                        binding.recyclerView.visibility = View.GONE
+                        placeDatas.clear() // 기존 데이터를 지움
+                        placeSearchAdapter.notifyDataSetChanged()
                     }
 
                     // "최근 검색" 글씨 제거
@@ -135,6 +143,9 @@ class SearchFragment : Fragment() {
 
                 // 리사이클러뷰 구분선 제거
                 binding.recyclerView.removeItemDecoration(dividerItemDecoration)
+
+                binding.noneImg.visibility = View.GONE
+                binding.noneText.visibility = View.GONE
             }
 
             // 검색 버튼 클릭 리스너
@@ -161,6 +172,7 @@ class SearchFragment : Fragment() {
                 val searchText = binding.searchText.text.toString()
                 if (searchText.isNotEmpty()) {
                     fetchPlacesByName(searchText)
+
                     initPlaceRecycler()
 
                     // datas에 해당 검색어가 이미 존재하면 삭제한 후 추가
@@ -171,6 +183,11 @@ class SearchFragment : Fragment() {
 
                     // 검색 버튼 클릭 시 리사이클러뷰를 보이도록 변경
                     binding.recyclerView.visibility = View.VISIBLE
+                }
+                else {
+                    binding.recyclerView.visibility = View.GONE
+                    placeDatas.clear() // 기존 데이터를 지움
+                    placeSearchAdapter.notifyDataSetChanged()
                 }
 
                 // "최근 검색" 글씨 제거
@@ -193,7 +210,7 @@ class SearchFragment : Fragment() {
 
     private fun initPlaceRecycler() {
         // 어댑터에 데이터 설정
-        binding.recyclerView.adapter = placeSearchAdapter
+        placeSearchAdapter = PlaceSearchAdapter(placeDatas)
 
         placeSearchAdapter.datas = placeDatas
 
@@ -202,17 +219,24 @@ class SearchFragment : Fragment() {
     }
 
     private fun fetchPlacesByName(searchText: String) {
+        // 데이터를 가져온 후 어댑터에 데이터 설정
+        placeDatas.clear()       // 기존 데이터를 지움
+        placeSearchAdapter.notifyDataSetChanged()
+        binding.recyclerView.visibility = View.GONE
+        binding.noneImg.visibility = View.VISIBLE
+        binding.noneText.visibility = View.VISIBLE
+
         getPlaceByName(searchText) { result ->
-            // 데이터를 가져온 후 어댑터에 데이터 설정
-            placeDatas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
-            placeDatas.addAll(result)
-            placeSearchAdapter.notifyDataSetChanged()
+            if(!result.isNullOrEmpty()) {
+                // 리사이클러뷰를 보이도록 변경
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.noneImg.visibility = View.GONE
+                binding.noneText.visibility = View.GONE
 
-            // 리사이클러뷰를 보이도록 변경
-            binding.recyclerView.visibility = View.VISIBLE
-
-            // 로그를 추가하여 데이터가 잘 가져와지는지 확인
-            Log.d("SearchResultFragment", "Fetched ${result.size} places by name")
+                placeDatas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+                placeDatas.addAll(result)
+                placeSearchAdapter.notifyDataSetChanged()
+            }
         }
     }
 
