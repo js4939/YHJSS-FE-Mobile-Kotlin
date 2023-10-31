@@ -225,6 +225,18 @@ class RecommendFragment : Fragment() {
         // btnPurpose를 누른 경우에만 keyword_rv가 보이도록 하는 변수
         var isPurposeButtonClicked = false
 
+        // 초기 카테고리 설정 (예: "C001")
+        val initialCategory = "C001"
+        categorynum = 0
+        updateRecyclerView(initialCategory)
+
+        // 리사이클러뷰 구분선 지정
+        val dividerItemDecoration =
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.rvRecommendlist.addItemDecoration(dividerItemDecoration)
+
+        initClickEvent()
+
         btnMood.setOnClickListener {
             if (isPurposeButtonClicked) {
                 isPurposeButtonClicked = false
@@ -308,6 +320,29 @@ class RecommendFragment : Fragment() {
         }
 
         btnPurpose.setOnClickListener {
+            getPlaceByKeyword("가족") { result ->
+                currentKeyword = "가족"
+                // Clear the existing data
+                datas.clear()
+                // Set up the RecyclerView with the data from the result
+                for (item in result) {
+                    val newPlaceResponse = PlaceData(
+                        id = item.placeId,
+                        name = item.name,
+                        region = item.region,
+                        address = item.address,
+                        photoUrl = item.photoUrl,
+                        pos = 0.0,
+                        totalNum = 0,
+                        keywordText = currentKeyword,
+                        keywordNum = item.keywordCount
+                    )
+                    datas.add(newPlaceResponse)
+                }
+                // Notify the adapter that the data has changed
+                placeAdapter.notifyDataSetChanged()
+            }
+
             selectedImageResource = R.drawable.ic_purpose_selected
             btnPurpose.setImageResource(selectedImageResource)
 
@@ -319,7 +354,7 @@ class RecommendFragment : Fragment() {
             // btnPurpose를 눌렀음을 표시
             isPurposeButtonClicked = true
 
-            // 키워드 관련 액션 추가 예정
+            // 키워드 관련 액션 추가
             val keyword_rv = view.findViewById<RecyclerView>(R.id.rv_keywordlist)
             keyword_rv.visibility=View.VISIBLE
 
@@ -334,6 +369,14 @@ class RecommendFragment : Fragment() {
             btnTransport.setImageResource(R.drawable.ic_transport)
             btnCongestion.setImageResource(R.drawable.ic_congestion)
             btnInfra.setImageResource(R.drawable.ic_infra)
+
+            val previousSelectedIndex = selectedButtonIndex
+            if (previousSelectedIndex != -1) {
+                buttonAdapter.toggleItemSelection(previousSelectedIndex)
+            }
+
+            selectedButtonIndex = 0
+            buttonAdapter.toggleItemSelection(selectedButtonIndex)
 
             buttonAdapter.setOnItemClickListener(object : ButtonAdapter.OnItemClickListener {
                 override fun onItemClick(item: String, position: Int) {
@@ -450,20 +493,6 @@ class RecommendFragment : Fragment() {
                 }
             })
         }
-
-
-        // 초기 카테고리 설정 (예: "C001")
-        val initialCategory = "C001"
-        categorynum = 0
-        updateRecyclerView(initialCategory)
-
-        // 리사이클러뷰 구분선 지정
-        val dividerItemDecoration =
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        binding.rvRecommendlist.addItemDecoration(dividerItemDecoration)
-
-        initClickEvent()
-
         return view
     }
 
