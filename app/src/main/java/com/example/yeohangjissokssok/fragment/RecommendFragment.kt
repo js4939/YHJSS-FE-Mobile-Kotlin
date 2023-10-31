@@ -1,6 +1,7 @@
 package com.example.yeohangjissokssok.fragment
 
 import PlaceAdapter
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,9 +18,7 @@ import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.activity.*
 import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.FragmentRecommendBinding
-import com.example.yeohangjissokssok.models.PlaceData
-import com.example.yeohangjissokssok.models.SACategoryResponse
-import com.example.yeohangjissokssok.models.SAPlaceResponse
+import com.example.yeohangjissokssok.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -34,11 +34,15 @@ class RecommendFragment : Fragment() {
     private lateinit var binding: FragmentRecommendBinding
 
     var caPlaceIds = mutableListOf<Long>()
+    var keyPlaceIds = mutableListOf<Long>()
 
     val datas = ArrayList<PlaceData>()
     var placeAdapter = PlaceAdapter(datas)
 
     var categorynum = 0
+    var currentKeyword = ""
+
+    var keywordList = HashMap<String, Int>()
 
     val name = "name"
 
@@ -52,8 +56,8 @@ class RecommendFragment : Fragment() {
     var isPurposeClicked = false
 
     val buttonDataList = listOf(
-        "힐링", "운동", "전시", "산책", "홀로", "친구", "가족", "커플", "나들이", "효도",
-        "꽃", "바다", "데이트", "야경", "맛집", "휴식", "소개팅", "쇼핑", "아이", "등산"
+        "가족", "관광", "꽃", "나들이", "등산", "맛집", "바다", "산책", "쇼핑",
+        "아이", "야경", "연인", "운동", "전시", "친구", "홀로", "힐링"
     )
 
     val buttonAdapter = ButtonAdapter(buttonDataList)
@@ -92,7 +96,6 @@ class RecommendFragment : Fragment() {
             })
         }
     }
-
 
     private fun getPlaceById(input: Long, callback: (PlaceResponse) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -142,6 +145,60 @@ class RecommendFragment : Fragment() {
         }
     }
 
+    private fun getPlaceByKeyword(input: String, callback: (List<KeywordListResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getPlaceByKeyword(input).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<KeywordListResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<KeywordListResponse>::class.java)
+                            .toList()
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+
+                        // 받아온 placeId를 keyPlaceIds 리스트에 추가
+                        keyPlaceIds.clear()
+                        for (item in result) {
+                            keyPlaceIds.add(item.placeId)
+                        }
+                    }
+                    //Log.e("response code", response.code().toString())
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    // 전체 키워드 개수 불러오는 메소드
+    private fun getKeywordById(input: Long, callback: (PlaceKeywordResponse) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getKeywords(input).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: PlaceKeywordResponse = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, PlaceKeywordResponse::class.java)
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -293,14 +350,107 @@ class RecommendFragment : Fragment() {
                         // 현재 선택한 버튼의 인덱스 업데이트
                         selectedButtonIndex = position
 
+                        val buttonDataList = listOf(
+                            "가족", "관광", "꽃", "나들이", "등산", "맛집", "바다", "산책", "쇼핑",
+                            "아이", "야경", "연인", "운동", "전시", "친구", "홀로", "힐링"
+                        )
+
                         // 선택한 버튼의 상태를 토글
                         buttonAdapter.toggleItemSelection(position)
 
                         // 선택된 아이템(item)에 대한 처리를 추가
+                        when (selectedButtonIndex){
+                            0 -> getPlaceByKeyword("가족"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "가족"
+                                setKeyword(result)
+                            }
+                            1 ->  getPlaceByKeyword("관광"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "관광"
+                                setKeyword(result)
+                            }
+                            2 -> getPlaceByKeyword("꽃"){
+                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                            currentKeyword = "꽃"
+                            setKeyword(result)
+                            }
+                            3 -> getPlaceByKeyword("나들이"){
+                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                            currentKeyword = "나들이"
+                            setKeyword(result)
+                            }
+                            4 -> getPlaceByKeyword("등산"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "등산"
+                                setKeyword(result)
+                            }
+                            5 -> getPlaceByKeyword("맛집"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "맛집"
+                                setKeyword(result)
+                            }
+                            6 -> getPlaceByKeyword("바다"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "바다"
+                                setKeyword(result)
+                            }
+                            7 -> getPlaceByKeyword("산책"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "산책"
+                                setKeyword(result)
+                            }
+                            8 -> getPlaceByKeyword("쇼핑"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "쇼핑"
+                                setKeyword(result)
+                            }
+                            9 -> getPlaceByKeyword("아이"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "아이"
+                                setKeyword(result)
+                            }
+                            10 -> getPlaceByKeyword("야경"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "야경"
+                                setKeyword(result)
+                            }
+                            11 -> getPlaceByKeyword("연인"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "연인"
+                                setKeyword(result)
+                            }
+                            12 -> getPlaceByKeyword("운동"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "운동"
+                                setKeyword(result)
+                            }
+                            13 -> getPlaceByKeyword("전시"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "전시"
+                                setKeyword(result)
+                            }
+                            14 -> getPlaceByKeyword("친구"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "친구"
+                                setKeyword(result)
+                            }
+                            15 -> getPlaceByKeyword("홀로"){
+                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                            currentKeyword = "홀로"
+                            setKeyword(result)
+                            }
+                            16 -> getPlaceByKeyword("힐링"){
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "힐링"
+                                setKeyword(result)
+                            }
+                        }
                     }
                 }
             })
         }
+
 
         // 초기 카테고리 설정 (예: "C001")
         val initialCategory = "C001"
@@ -315,6 +465,35 @@ class RecommendFragment : Fragment() {
         initClickEvent()
 
         return view
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun setKeyword(result: List<KeywordListResponse>) {
+        datas.clear() // 데이터 초기화
+
+        // placeAdapter 초기화
+        binding.rvRecommendlist.adapter = placeAdapter
+
+        var idx = 0
+        while (idx < keyPlaceIds.size){
+            // 장소 정보 가져오기
+            val newPlaceResponse = PlaceData(
+                id = result[idx].placeId,
+                name = result[idx].name,
+                region = result[idx].region,
+                address = result[idx].address,
+                photoUrl = result[idx].photoUrl,
+                pos = 0.0,
+                totalNum = 0,
+                keywordText = currentKeyword,
+                keywordNum = result[idx].keywordCount
+            )
+
+                datas.add(newPlaceResponse)
+                placeAdapter.notifyItemInserted(datas.size - 1)
+
+               idx++ // 다음 장소를 가져오기 위해 인덱스 증가
+        }
     }
 
     private fun updateRecyclerView(category: String) {
@@ -375,8 +554,6 @@ class RecommendFragment : Fragment() {
 
         // 첫 번째 장소를 가져오기 위해 호출
         addNextPlace()
-
-        //placeAdapter.notifyDataSetChanged()
     }
 
     private fun initClickEvent() {
@@ -396,18 +573,6 @@ class RecommendFragment : Fragment() {
                         intent.putExtra("placeId", placeAdapter.datas[position].id)
                         intent.putExtra("region", placeAdapter.datas[position].region)
                         intent.putExtra("name", placeAdapter.datas[position].name)
-//                        intent.putExtra(
-//                            "positiveNumber",
-//                            placeAdapter.datas[position].
-//                        )
-//                        intent.putExtra(
-//                            "totalNumber",
-//                            placeAdapterRecommend.datas[position].totalNumber
-//                        )
-//                        intent.putExtra(
-//                            "proportion",
-//                            placeAdapterRecommend.datas[position].proportion
-//                        )
                         intent.putExtra("page", "recommend")
                         startActivity(intent)
                     }

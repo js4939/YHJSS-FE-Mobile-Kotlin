@@ -7,5 +7,7 @@ class PlaceData (
     val address: String?,
     val photoUrl: String,
     val pos: Double,
-    val totalNum: Int
+    val totalNum: Int,
+    val keywordText: String = "없음",
+    val keywordNum: Int = -1
 )

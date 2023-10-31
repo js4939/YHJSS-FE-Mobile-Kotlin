@@ -65,4 +65,7 @@ interface RetrofitService {
         @Path("placeId") placeId: Long,
         @Path("month") month: Int
     ): Call<APIResponseData>
+
+    @GET("keywords")
+    fun getPlaceByKeyword(@Query("keyword") keyword: String) : Call<APIResponseData>
 }
