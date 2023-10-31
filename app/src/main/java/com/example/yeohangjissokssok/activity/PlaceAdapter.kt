@@ -1,4 +1,5 @@
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -57,10 +58,16 @@ class PlaceAdapter(
             .centerCrop() // 이미지 크기 조절 및 자르기
             .into(imageView)
 
+        holder.binding.PosBarRv.visibility = View.VISIBLE
+
         holder.binding.tvRvPlacename.text = datas[position].name
         holder.binding.tvRvPlacelocation.text = datas[position].region
         holder.binding.tvRvLocation.text = datas[position].address
         holder.binding.PosBarRv.progress = (datas[position].pos).toInt()
         holder.binding.PosPercentRv.text = (datas[position].pos).toInt().toString() + "% (" + datas[position].totalNum + ")"
+        if(datas[position].keywordNum != -1) {
+            holder.binding.PosPercentRv.text = datas[position].keywordText + " (" + datas[position].keywordNum.toString() +")"
+            holder.binding.PosBarRv.visibility = View.GONE
+        }
     }
 }
