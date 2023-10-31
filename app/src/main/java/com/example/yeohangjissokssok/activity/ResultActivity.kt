@@ -4,6 +4,7 @@ import PlaceAdapter
 import ReviewAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Base64
@@ -23,8 +24,7 @@ import com.example.yeohangjissokssok.api.RetrofitBuilder
 import com.example.yeohangjissokssok.databinding.ActivityResultBinding
 import com.example.yeohangjissokssok.fragment.HomeFragment
 import com.example.yeohangjissokssok.fragment.RecommendFragment
-import com.example.yeohangjissokssok.models.ReviewResponse
-import com.example.yeohangjissokssok.models.SAPlaceResponse
+import com.example.yeohangjissokssok.models.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +34,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.security.MessageDigest
+import java.util.Collections.max
 import kotlin.math.round
+import kotlin.time.Duration.Companion.seconds
 
 class ResultActivity : AppCompatActivity() {
 
@@ -44,10 +46,21 @@ class ResultActivity : AppCompatActivity() {
 
     var placeId: Long = -1
     var saPlaceId: Long = -1
+    var keywordId: Long = -1
     var monthId: Long = -1
+    var currentMonth: Int = 0
     var category: String = "C001"
 
+    var key1 = ""
+    var key2 = ""
+    var key3 = ""
+    var currentKey = ""
+
     val datas = ArrayList<ReviewResponse>()
+    val reviewDatas = ArrayList<ReviewData>()
+
+    var keywordList = HashMap<String, Int>()
+    var keywordArray = ArrayList<Int>(17)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,6 +127,10 @@ class ResultActivity : AppCompatActivity() {
                             .toList()
                         callback(result) // 데이터를 가져온 후 콜백으로 전달
                     }
+                    else{
+                        reviewDatas.clear()
+                        adapter.notifyDataSetChanged()
+                    }
                 }
 
                 override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
@@ -138,6 +155,10 @@ class ResultActivity : AppCompatActivity() {
                             .fromJson(jsonResult, Array<ReviewResponse>::class.java)
                             .toList()
                         callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                    else{
+                        reviewDatas.clear()
+                        adapter.notifyDataSetChanged()
                     }
                 }
 
@@ -198,6 +219,114 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
+    // 전체 키워드 개수 불러오는 메소드
+    private fun getKeywordById(input: Long, callback: (PlaceKeywordResponse) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getKeywords(input).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: PlaceKeywordResponse = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, PlaceKeywordResponse::class.java)
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    // 월 별 키워드 개수 불러오는 메소드
+    private fun getMonthKeyword(month: Int, callback: (PlaceKeywordResponse) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getMonthKeywords(placeId, month).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: PlaceKeywordResponse = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, PlaceKeywordResponse::class.java)
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    // 키워드 별 리뷰 불러오는 메소드
+    private fun getPlaceKeywordReviews(keyword: String, callback: (List<ReviewKeywordResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getKeywordReviews(keywordId, keyword).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<ReviewKeywordResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<ReviewKeywordResponse>::class.java)
+                            .toList()
+
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                    else{
+                        reviewDatas.clear()
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
+    // 키워드 별 월 별 리뷰 불러오는 메소드
+    private fun getPlaceMonthKeywordReviews(id: Long, keyword: String, callback: (List<ReviewKeywordResponse>) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            RetrofitBuilder.api.getMonthKeywordReviews(id, keyword).enqueue(object : Callback<APIResponseData> {
+                override fun onResponse(
+                    call: Call<APIResponseData>, response: Response<APIResponseData>
+                ) {
+                    if (response.isSuccessful) {
+                        val temp = response.body() as APIResponseData
+                        val jsonResult = Gson().toJson(temp.data)
+                        val result: List<ReviewKeywordResponse> = GsonBuilder()
+                            .create()
+                            .fromJson(jsonResult, Array<ReviewKeywordResponse>::class.java)
+                            .toList()
+
+                        callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                    else{
+                        reviewDatas.clear()
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
+                    Log.d("test", "연결실패")
+                }
+            })
+        }
+    }
+
     // 사진 설정 메소드
     private fun setPlaceImg(url: String){
         Glide.with(this)
@@ -241,10 +370,16 @@ class ResultActivity : AppCompatActivity() {
             }
         }
 
-        adapter = ReviewAdapter(this.datas)
+        getKeywordById(placeId){
+            result ->
+            keywordId = result.samonthlykeyword_id
+            setKeywords(result)
+        }
+
+        adapter = ReviewAdapter(this.reviewDatas)
         binding.recyclerView.adapter = adapter
 
-        adapter.datas = datas
+        adapter.datas = reviewDatas
 
         // recyclerView에 구분자 추가
         binding.recyclerView.addItemDecoration(
@@ -256,10 +391,10 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun initClickEvent(result: List<SAPlaceResponse>) {
-        binding.apply{
+        binding.apply {
             goBackBtn.setOnClickListener {
                 // 뒤로가기 버튼 클릭 시 이벤트
-                val previousPage = intent.getStringExtra("page") as String
+                /* val previousPage = intent.getStringExtra("page") as String
                 Log.d("back", previousPage)
 
                 if (previousPage == "recommend") {
@@ -279,7 +414,7 @@ class ResultActivity : AppCompatActivity() {
                     fragmentTransaction.replace(fragment_home, HomeFragment())
                     fragmentTransaction.addToBackStack(null)
                     fragmentTransaction.commit()
-                }
+                }*/
             }
 
             mapBtn.setOnClickListener {
@@ -299,42 +434,277 @@ class ResultActivity : AppCompatActivity() {
             radioButton4.setOnClickListener {
                 setRadioButton(result)
             }
+            radioButton5.setOnClickListener {
+                setKeywordRadioButton()
+                setRadioButton(result)
+            }
+
+            KeywordRadioButton1.setOnClickListener {
+                setKeywordRadioButton()
+                if (currentMonth > 0){
+                    getMonthKeyword(currentMonth){
+                        result ->
+                        setKeywords(result)
+                        setKeywordMonthlyReviews(monthId)
+                    }
+                }
+                else{
+                    getKeywordById(placeId){
+                        result ->
+                        setKeywords(result)
+                        currentKey = key1
+                        setKeywordReviews(currentKey)
+                    }
+                }
+            }
+            KeywordRadioButton2.setOnClickListener {
+                setKeywordRadioButton()
+                if (currentMonth > 0){
+                    getMonthKeyword(currentMonth){
+                            result ->
+                        setKeywords(result)
+                        setKeywordMonthlyReviews(monthId)
+                    }
+                }
+                else{
+                    getKeywordById(placeId){
+                            result ->
+                        setKeywords(result)
+                        currentKey = key2
+                        setKeywordReviews(currentKey)
+                    }
+                }
+            }
+            KeywordRadioButton3.setOnClickListener {
+                setKeywordRadioButton()
+                if (currentMonth > 0){
+                    getMonthKeyword(currentMonth){
+                            result ->
+                        setKeywords(result)
+                        setKeywordMonthlyReviews(monthId)
+                    }
+                }
+                else{
+                    getKeywordById(placeId){
+                            result ->
+                        setKeywords(result)
+                        currentKey = key3
+                        setKeywordReviews(currentKey)
+
+                    }
+                }
+            }
         }
+    }
+
+    private fun initReview(result: List<ReviewResponse>){
+        reviewDatas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+        var size = result.size
+        var idx = 0
+        while(idx < size){
+            val newReview = ReviewData(
+                id = result[idx].id,
+                date = result[idx].date,
+                content = result[idx].content,
+                state = result[idx].state,
+                keyword = "없음"
+            )
+            reviewDatas.add(newReview)
+            adapter.notifyItemInserted(idx)
+            idx++;
+        }
+
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun initKeywordReview(result: List<ReviewKeywordResponse>){
+        reviewDatas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
+        var size = result.size
+        var idx = 0
+        while(idx < size){
+            val newReview = ReviewData(
+                id = result[idx].id,
+                date = result[idx].date,
+                content = result[idx].content,
+                state = -1,
+                keyword = result[idx].keyword
+            )
+            reviewDatas.add(newReview)
+            adapter.notifyItemInserted(idx)
+            idx++;
+        }
+
+        adapter.notifyDataSetChanged()
     }
 
     private fun setReviews(){
         binding.apply{
             getPlaceReviews() { result ->
-                Log.d("reviews", result.toString())
-
-                datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
-                datas.addAll(result)
-                if (result == null) {
-
-                }
-                adapter.notifyDataSetChanged()
+                initReview(result)
             }
         }
     }
 
     private fun setMonthlyReviews(id: Long){
         getPlaceMonthReviews(id) { result ->
-            Log.d("reviews", result.toString())
+            initReview(result)
+        }
+    }
 
-            datas.clear() // 기존 데이터를 지우고 새로운 데이터로 대체
-            datas.addAll(result)
-            if (result == null) {
+    private fun setKeywordReviews(keyword: String){
+        getPlaceKeywordReviews(keyword) {
+            result ->
+            initKeywordReview(result)
+        }
+    }
 
+    private fun setKeywordMonthlyReviews(id: Long){
+        getPlaceMonthKeywordReviews(id, currentKey){ result ->
+            initKeywordReview(result)
+        }
+    }
+
+    private fun setVisibility(isPurpose: Boolean) {
+        binding.apply {
+            if (!isPurpose) {
+                keywordText.visibility = View.GONE
+                KeywordRadioGroup.visibility = View.GONE
+                KeywordRadioButton1.visibility = View.GONE
+                KeywordRadioButton2.visibility = View.GONE
+                KeywordRadioButton3.visibility = View.GONE
+
+                PosText.visibility = View.VISIBLE
+                NegText.visibility = View.VISIBLE
+                NeuText.visibility = View.VISIBLE
+
+                PosPercent.visibility = View.VISIBLE
+                NegPercent.visibility = View.VISIBLE
+                NeuPercent.visibility = View.VISIBLE
+
+                PosBar.visibility = View.VISIBLE
+                NegBar.visibility = View.VISIBLE
+                NeuBar.visibility = View.VISIBLE
             }
-            adapter.notifyDataSetChanged()
+            else {
+                keywordText.visibility = View.VISIBLE
+                KeywordRadioGroup.visibility = View.VISIBLE
+                KeywordRadioButton1.visibility = View.VISIBLE
+                KeywordRadioButton2.visibility = View.VISIBLE
+                KeywordRadioButton3.visibility = View.VISIBLE
+
+                PosText.visibility = View.GONE
+                NegText.visibility = View.GONE
+                NeuText.visibility = View.GONE
+
+                PosPercent.visibility = View.GONE
+                NegPercent.visibility = View.GONE
+                NeuPercent.visibility = View.GONE
+
+                PosBar.visibility = View.GONE
+                NegBar.visibility = View.GONE
+                NeuBar.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setKeywords(keywordResult: PlaceKeywordResponse){
+        binding.apply {
+            keywordList.clear()
+            keywordArray.clear()
+
+            keywordList.put("홀로", keywordResult.aloneCount)
+            keywordList.put("바다", keywordResult.beachCount)
+            keywordList.put("연인", keywordResult.coupleCount)
+            keywordList.put("운동", keywordResult.exerciseCount)
+            keywordList.put("가족", keywordResult.familyCount)
+            keywordList.put("꽃", keywordResult.flowerCount)
+            keywordList.put("맛집", keywordResult.foodCount)
+            keywordList.put("친구", keywordResult.friendCount)
+            keywordList.put("힐링", keywordResult.healingCount)
+            keywordList.put("등산", keywordResult.hikingCount)
+            keywordList.put("아이", keywordResult.kidsCount)
+            keywordList.put("전시", keywordResult.museumCount)
+            keywordList.put("야경", keywordResult.nightViewCount)
+            keywordList.put("나들이", keywordResult.picnicCount)
+            keywordList.put("쇼핑", keywordResult.shoppingCount)
+            keywordList.put("관광", keywordResult.tourCount)
+            keywordList.put("산책", keywordResult.walkCount)
+
+            var keywords = keywordList.toList().sortedByDescending { it.second }.toMap().toMutableMap()
+            for((key, value) in keywords){
+                keywordArray.add(value)
+                Log.d("keyword", key + " " + value)
+            }
+
+            keywordArray.sort()
+
+            for((key, value) in keywordList){
+                if(keywordArray.max() == value) {
+                    key1 = key
+                    KeywordRadioButton1.text = key + " " + keywordArray.max()
+                    keywordArray.remove(value)
+                    keywordList.remove(key)
+                    break
+                }
+            }
+
+            for((key, value) in keywordList){
+                if(keywordArray.max() == value) {
+                    key2 = key
+                    KeywordRadioButton2.text = key + " " + keywordArray.max()
+                    keywordArray.remove(value)
+                    keywordList.remove(key)
+                    break
+                }
+            }
+
+            for((key, value) in keywordList){
+                if(keywordArray.max() == value) {
+                    key3 = key
+                    KeywordRadioButton3.text = key + " " + keywordArray.max()
+                    keywordArray.remove(value)
+                    keywordList.remove(key)
+                    break
+                }
+            }
+        }
+    }
+
+    private fun setKeywordRadioButton(){
+        binding.apply {
+            when(KeywordRadioGroup.checkedRadioButtonId){
+                R.id.KeywordRadioButton1 -> {
+                    currentKey = key1
+                    if(currentMonth > 0)
+                        setKeywordMonthlyReviews(monthId)
+                    else
+                        setKeywordReviews(currentKey)
+                }
+                R.id.KeywordRadioButton2 -> {
+                    currentKey = key2
+                    if(currentMonth > 0)
+                        setKeywordMonthlyReviews(monthId)
+                    else
+                        setKeywordReviews(currentKey)
+
+                }
+                R.id.KeywordRadioButton3 -> {
+                    currentKey = key3
+                    if(currentMonth > 0)
+                        setKeywordMonthlyReviews(monthId)
+                    else
+                        setKeywordReviews(currentKey)
+                }
+            }
         }
     }
 
     private fun setRadioButton(result: List<SAPlaceResponse>){
         binding.apply {
-            Log.d("SA Result", result.toString())
             when(radioGroup.checkedRadioButtonId){
                 R.id.radioButton1 -> {
+                    setVisibility(false)
+
                     // 분위기 선택 시
                     var reviewCount = result[0].positive + result[0].negative + result[0].neutral
                     var pos = 0.0
@@ -368,6 +738,8 @@ class ResultActivity : AppCompatActivity() {
                 }
 
                 R.id.radioButton2 -> {
+                    setVisibility(false)
+
                     // 교통 선택 시
                     var reviewCount = result[1].positive + result[1].negative + result[1].neutral
                     var pos = 0.0
@@ -401,6 +773,8 @@ class ResultActivity : AppCompatActivity() {
                 }
 
                 R.id.radioButton3 -> {
+                    setVisibility(false)
+
                     // 혼잡도 선택 시
                     var reviewCount = result[2].positive + result[2].negative + result[2].neutral
                     var pos = 0.0
@@ -434,6 +808,8 @@ class ResultActivity : AppCompatActivity() {
                 }
 
                 R.id.radioButton4 -> {
+                    setVisibility(false)
+
                     // 인프라 선택 시
                     var reviewCount = result[3].positive + result[3].negative + result[3].neutral
                     var pos = 0.0
@@ -463,6 +839,26 @@ class ResultActivity : AppCompatActivity() {
                     else if(monthId != -1.toLong()){
                         category = "C004"
                         setMonthlyReviews(monthId)
+                    }
+                }
+
+                R.id.radioButton5 -> {
+                    setVisibility(true)
+                    if(category != "keyword" && monthId == -1.toLong()){
+                        category = "keyword"
+                        getKeywordById(placeId) {
+                            keyResult ->
+                            setKeywords(keyResult)
+                            setKeywordReviews(currentKey)
+                        }
+                    }
+                    else if(monthId != -1.toLong()){
+                        category = "keyword"
+                        getMonthKeyword(currentMonth) {
+                            keyResult ->
+                            setKeywords(keyResult)
+                            setKeywordMonthlyReviews(monthId)
+                        }
                     }
                 }
             }
@@ -496,9 +892,19 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceSAResult(placeId){
                                     result ->
                                 monthId = -1
+                                currentMonth = 0
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setReviews()
+                                if(category == "keyword"){
+                                    getKeywordById(placeId) {
+                                            keyResult ->
+                                        setKeywords(keyResult)
+                                        setKeywordRadioButton()
+                                        setKeywordReviews(currentKey)
+                                    }
+                                }
+                                else
+                                    setReviews()
                             }
                         }
 
@@ -507,10 +913,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 1){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 1
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(1){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 2월
@@ -518,10 +934,21 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 2){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 2
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+
+                            if(category == "keyword"){
+                                getMonthKeyword(2){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 3월
@@ -529,10 +956,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 3){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 3
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(3){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 4월
@@ -540,10 +977,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 4){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 4
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(4){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 5월
@@ -551,10 +998,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 5){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 5
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(5){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 6월
@@ -562,10 +1019,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 6){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 6
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(6){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 7월
@@ -573,10 +1040,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 7){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 7
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(7){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 8월
@@ -584,10 +1061,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 8){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 8
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(8){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 9월
@@ -595,10 +1082,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 9){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 9
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(9){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 10월
@@ -606,10 +1103,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 10){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 10
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(10){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 11월
@@ -617,10 +1124,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 11){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 11
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(11){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
 
                         // 12월
@@ -628,10 +1145,20 @@ class ResultActivity : AppCompatActivity() {
                             getPlaceMonthlySAResult(placeId, 12){
                                     result ->
                                 monthId = result[0].samonthlysummary_id
+                                currentMonth = 12
                                 initClickEvent(result)
                                 setRadioButton(result)
-                                setMonthlyReviews(monthId)
                             }
+                            if(category == "keyword"){
+                                getMonthKeyword(12){
+                                        keyResult ->
+                                    setKeywords(keyResult)
+                                    setKeywordRadioButton()
+                                    setKeywordMonthlyReviews(monthId)
+                                }
+                            }
+                            else
+                                setMonthlyReviews(monthId)
                         }
                     }
                 }

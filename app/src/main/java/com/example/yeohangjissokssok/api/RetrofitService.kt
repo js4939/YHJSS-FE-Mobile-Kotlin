@@ -10,30 +10,59 @@ import retrofit2.http.Query
 
 interface RetrofitService {
     @GET("places/{placeId}")
-    fun getPlace(@Path("placeId") number : Long) : Call<APIResponseData>
+    fun getPlace(@Path("placeId") number: Long): Call<APIResponseData>
 
     @GET("places/name")
-    fun getPlaceByName(@Query("name") name: String) : Call<APIResponseData>
+    fun getPlaceByName(@Query("name") name: String): Call<APIResponseData>
 
     @GET("sas/place/{placeId}")
-    fun getSAPlace(@Path("placeId") placeId : Long) : Call<APIResponseData>
+    fun getSAPlace(@Path("placeId") placeId: Long): Call<APIResponseData>
 
     @GET("sas/{placeId}/{month}")
-    fun getSAMonthPlace(@Path("placeId") placeId : Long,
-                        @Path("month") month: Int) : Call<APIResponseData>
+    fun getSAMonthPlace(
+        @Path("placeId") placeId: Long,
+        @Path("month") month: Int
+    ): Call<APIResponseData>
 
     @GET("sas/category/{categoryCode}")
-    fun getSACategoryPlace(@Path("categoryCode") categoryCode : String) : Call<APIResponseData>
+    fun getSACategoryPlace(@Path("categoryCode") categoryCode: String): Call<APIResponseData>
 
     @GET("sas/category/{categoryCode}/{month}")
-    fun getMonthSACategoryPlace(@Path("categoryCode") categoryCode : String,
-                                @Path("month") month: Int) : Call<APIResponseData>
+    fun getMonthSACategoryPlace(
+        @Path("categoryCode") categoryCode: String,
+        @Path("month") month: Int
+    ): Call<APIResponseData>
 
     @GET("reviews/{saMonthlySummaryId}/{categoryCode}")
-    fun getReviews(@Path("saMonthlySummaryId") saMonthlySummaryId : Long,
-                   @Path("categoryCode") categoryCode: String) : Call<APIResponseData>
+    fun getReviews(
+        @Path("saMonthlySummaryId") saMonthlySummaryId: Long,
+        @Path("categoryCode") categoryCode: String
+    ): Call<APIResponseData>
 
     @GET("reviews/month/{saMonthlySummaryId}/{categoryCode}")
-    fun getMonthReviews(@Path("saMonthlySummaryId") saMonthlySummaryId : Long,
-                        @Path("categoryCode") categoryCode: String) : Call<APIResponseData>
+    fun getMonthReviews(
+        @Path("saMonthlySummaryId") saMonthlySummaryId: Long,
+        @Path("categoryCode") categoryCode: String
+    ): Call<APIResponseData>
+
+    @GET("reviews/{saMonthlySummaryId}")
+    fun getKeywordReviews(
+        @Path("saMonthlySummaryId") saMonthlySummaryId: Long,
+        @Query("keyword") keyword: String
+    ): Call<APIResponseData>
+
+    @GET("reviews/month/{saMonthlySummaryId}")
+    fun getMonthKeywordReviews(
+        @Path("saMonthlySummaryId") saMonthlySummaryId: Long,
+        @Query("keyword") keyword: String
+    ): Call<APIResponseData>
+
+    @GET("keywords/place/{placeId}")
+    fun getKeywords(@Path("placeId") placeId: Long): Call<APIResponseData>
+
+    @GET("keywords/place/{placeId}/{month}")
+    fun getMonthKeywords(
+        @Path("placeId") placeId: Long,
+        @Path("month") month: Int
+    ): Call<APIResponseData>
 }

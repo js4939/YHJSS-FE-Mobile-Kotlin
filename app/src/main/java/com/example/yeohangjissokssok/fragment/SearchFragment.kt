@@ -69,13 +69,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun initClickEvent() {
+        binding.noneText.text = "검색 결과 불러오는 중 ..."
+
         searchAdapter.itemClicklistener =
             object : SearchAdapter.OnItemClickListener {
                 // 최근 검색 리사이클러뷰 data 클릭 리스너
                 override fun OnItemClick(position: Int) {
                     binding.recyclerView.adapter = placeSearchAdapter
 
-                    // RecyclerView를 처음에는 숨김(GONE) 상태로 설정
                     binding.recyclerView.visibility = View.GONE
 
                     // 리사이클러뷰 구분선 지정
@@ -151,6 +152,7 @@ class SearchFragment : Fragment() {
             // 검색 버튼 클릭 리스너
             searchBtn.setOnClickListener {
                 // 첫 data 검색 시 지막 구분선 및 "최근 검색" 추가
+                binding.noneText.text = "검색 결과 불러오는 중 ..."
                 if(datas.isEmpty()) {
                     binding.recentRecord.visibility = View.VISIBLE
                 }
@@ -247,6 +249,7 @@ class SearchFragment : Fragment() {
                     call: Call<APIResponseData>, response: Response<APIResponseData>
                 ) {
                     if (response.isSuccessful) {
+                        binding.noneText.text = "검색 결과 불러오는 중 ..."
                         val temp = response.body() as APIResponseData
                         val jsonResult = Gson().toJson(temp.data)
                         val result: List<PlaceResponse> = GsonBuilder()
@@ -254,6 +257,9 @@ class SearchFragment : Fragment() {
                             .fromJson(jsonResult, Array<PlaceResponse>::class.java)
                             .toList()
                         callback(result) // 데이터를 가져온 후 콜백으로 전달
+                    }
+                    else{
+                        binding.noneText.text = "검색어를 포함하는 장소가\n 등록되어 있지 않아요"
                     }
                 }
 
