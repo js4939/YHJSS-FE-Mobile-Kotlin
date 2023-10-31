@@ -192,11 +192,27 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
+                        android:layout_marginRight="20dp"
                         android:background="@drawable/selector_place_radio_button"
                         android:textColor="@drawable/selector_place_radio_text"
                         android:button="@null"
                         android:textAlignment="center"
                         android:text="인프라"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton5"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:background="@drawable/selector_place_radio_button"
+                        android:textColor="@drawable/selector_place_radio_text"
+                        android:button="@null"
+                        android:textAlignment="center"
+                        android:text="방문목적"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </RadioGroup>
@@ -210,6 +226,7 @@
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/PosText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -240,6 +257,16 @@
                         android:textColor="@color/textColor"
                         android:textStyle="bold"
                         android:text="100%" />
+                    <TextView
+                        android:id="@+id/keywordText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginBottom="3dp"
+                        android:text="Top 3 Keywords : "
+                        android:textColor="@color/black"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -249,6 +276,7 @@
                     android:layout_marginEnd="20dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/NegText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -279,6 +307,63 @@
                         android:textColor="@color/textColor"
                         android:textStyle="bold"
                         android:text="100%" />
+                    <RadioGroup
+                        android:id="@+id/KeywordRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="30dp"
+                        android:paddingTop="5dp"
+                        android:orientation="horizontal">
+                        <RadioButton
+                            android:id="@+id/KeywordRadioButton1"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:button="@null"
+                            android:checked="true"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:layout_marginRight="30dp"
+                            android:visibility="gone"
+                            android:text=""
+                            android:textAlignment="center"
+                            android:background="@drawable/selector_place_radio_button"
+                            android:textColor="@drawable/selector_place_radio_text"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                        <RadioButton
+                            android:id="@+id/KeywordRadioButton2"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:layout_marginRight="30dp"
+                            android:visibility="gone"
+                            android:background="@drawable/selector_place_radio_button"
+                            android:textColor="@drawable/selector_place_radio_text"
+                            android:button="@null"
+                            android:textAlignment="center"
+                            android:text=""
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <RadioButton
+                            android:id="@+id/KeywordRadioButton3"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:visibility="gone"
+                            android:background="@drawable/selector_place_radio_button"
+                            android:textColor="@drawable/selector_place_radio_text"
+                            android:button="@null"
+                            android:textAlignment="center"
+                            android:text=""
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </RadioGroup>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -288,6 +373,7 @@
                     android:layout_marginEnd="20dp"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/NeuText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -320,6 +406,7 @@
                         android:text="100%" />
                 </LinearLayout>
             </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
