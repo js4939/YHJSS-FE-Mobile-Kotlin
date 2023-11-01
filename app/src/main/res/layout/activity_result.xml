@@ -262,9 +262,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginBottom="3dp"
-                        android:text="Top 3 Keywords : "
+                        android:text="Keywords : "
                         android:textColor="@color/black"
-                        android:textSize="19sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:visibility="gone" />
                 </LinearLayout>
@@ -307,63 +307,17 @@
                         android:textColor="@color/textColor"
                         android:textStyle="bold"
                         android:text="100%" />
-                    <RadioGroup
-                        android:id="@+id/KeywordRadioGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="30dp"
-                        android:paddingTop="5dp"
-                        android:orientation="horizontal">
-                        <RadioButton
-                            android:id="@+id/KeywordRadioButton1"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:button="@null"
-                            android:checked="true"
-                            android:paddingLeft="5dp"
-                            android:paddingRight="5dp"
-                            android:layout_marginRight="30dp"
-                            android:visibility="gone"
-                            android:text=""
-                            android:textAlignment="center"
-                            android:background="@drawable/selector_place_radio_button"
-                            android:textColor="@drawable/selector_place_radio_text"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <RadioButton
-                            android:id="@+id/KeywordRadioButton2"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="5dp"
-                            android:paddingRight="5dp"
-                            android:layout_marginRight="30dp"
-                            android:visibility="gone"
-                            android:background="@drawable/selector_place_radio_button"
-                            android:textColor="@drawable/selector_place_radio_text"
-                            android:button="@null"
-                            android:textAlignment="center"
-                            android:text=""
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
 
-                        <RadioButton
-                            android:id="@+id/KeywordRadioButton3"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="5dp"
-                            android:paddingRight="5dp"
-                            android:visibility="gone"
-                            android:background="@drawable/selector_place_radio_button"
-                            android:textColor="@drawable/selector_place_radio_text"
-                            android:button="@null"
-                            android:textAlignment="center"
-                            android:text=""
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </RadioGroup>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_keywordlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="10dp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/keyword_recycler"
+                        android:visibility="gone"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"

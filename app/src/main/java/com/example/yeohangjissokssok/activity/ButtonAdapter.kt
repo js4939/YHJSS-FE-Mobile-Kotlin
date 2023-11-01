@@ -65,4 +65,5 @@ class ButtonAdapter(private val buttonDataList: List<String>) :
         selectedStates[position] = !selectedStates[position]
         notifyItemChanged(position)
     }
+
 }
