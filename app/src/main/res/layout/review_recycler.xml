@@ -32,7 +32,7 @@
                 android:text=""
                 android:padding="10dp"
                 android:layout_marginVertical="10sp"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
