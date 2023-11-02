@@ -12,8 +12,10 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import android.widget.SpinnerAdapter
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -33,6 +35,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.Console
 import java.security.MessageDigest
 import java.util.Collections.max
 import kotlin.math.round
@@ -42,8 +45,10 @@ class ResultActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityResultBinding
     lateinit var adapter: ReviewAdapter
+    lateinit var keywordAdapter : ButtonAdapter
     lateinit var mIntent: Intent
 
+    private var selectedButtonIndex: Int = 0
     var placeId: Long = -1
     var saPlaceId: Long = -1
     var keywordId: Long = -1
@@ -56,10 +61,14 @@ class ResultActivity : AppCompatActivity() {
     var key3 = ""
     var currentKey = ""
 
+    val datas = ArrayList<ReviewResponse>()
     val reviewDatas = ArrayList<ReviewData>()
 
     var keywordList = HashMap<String, Int>()
     var keywordArray = ArrayList<Int>(17)
+
+    data class KeywordData(val name: String, val count: Int)
+    var keywordDataList: MutableList<KeywordData> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -338,6 +347,9 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
+        setVisibility(false)
+        var tempList = arrayListOf<String>()
+        keywordAdapter = ButtonAdapter(tempList)
         placeId = intent.getLongExtra("placeId", 0)
 
         getPlaceById(placeId) {
@@ -387,6 +399,12 @@ class ResultActivity : AppCompatActivity() {
 
         // RecyclerView 갱신
         adapter.notifyDataSetChanged()
+
+        binding.rvKeywordlist.layoutManager = LinearLayoutManager(this,
+            LinearLayoutManager.HORIZONTAL, false)
+
+
+
     }
 
     private fun initClickEvent(result: List<SAPlaceResponse>) {
@@ -434,65 +452,65 @@ class ResultActivity : AppCompatActivity() {
                 setRadioButton(result)
             }
             radioButton5.setOnClickListener {
-                setKeywordRadioButton()
+                //setKeywordRadioButton()
                 setRadioButton(result)
             }
 
-            KeywordRadioButton1.setOnClickListener {
-                setKeywordRadioButton()
-                if (currentMonth > 0){
-                    getMonthKeyword(currentMonth){
-                            result ->
-                        setKeywords(result)
-                        setKeywordMonthlyReviews(monthId)
-                    }
-                }
-                else{
-                    getKeywordById(placeId){
-                            result ->
-                        setKeywords(result)
-                        currentKey = key1
-                        setKeywordReviews(currentKey)
-                    }
-                }
-            }
-            KeywordRadioButton2.setOnClickListener {
-                setKeywordRadioButton()
-                if (currentMonth > 0){
-                    getMonthKeyword(currentMonth){
-                            result ->
-                        setKeywords(result)
-                        setKeywordMonthlyReviews(monthId)
-                    }
-                }
-                else{
-                    getKeywordById(placeId){
-                            result ->
-                        setKeywords(result)
-                        currentKey = key2
-                        setKeywordReviews(currentKey)
-                    }
-                }
-            }
-            KeywordRadioButton3.setOnClickListener {
-                setKeywordRadioButton()
-                if (currentMonth > 0){
-                    getMonthKeyword(currentMonth){
-                            result ->
-                        setKeywords(result)
-                        setKeywordMonthlyReviews(monthId)
-                    }
-                }
-                else{
-                    getKeywordById(placeId){
-                            result ->
-                        setKeywords(result)
-                        currentKey = key3
-                        setKeywordReviews(currentKey)
-
-                    }
-                }
-            }
+//            KeywordRadioButton1.setOnClickListener {
+//                setKeywordRadioButton()
+//                if (currentMonth > 0){
+//                    getMonthKeyword(currentMonth){
+//                        result ->
+//                        setKeywords(result)
+//                        setKeywordMonthlyReviews(monthId)
+//                    }
+//                }
+//                else{
+//                    getKeywordById(placeId){
+//                        result ->
+//                        setKeywords(result)
+//                        currentKey = key1
+//                        setKeywordReviews(currentKey)
+//                    }
+//                }
+//            }
+//            KeywordRadioButton2.setOnClickListener {
+//                setKeywordRadioButton()
+//                if (currentMonth > 0){
+//                    getMonthKeyword(currentMonth){
+//                            result ->
+//                        setKeywords(result)
+//                        setKeywordMonthlyReviews(monthId)
+//                    }
+//                }
+//                else{
+//                    getKeywordById(placeId){
+//                            result ->
+//                        setKeywords(result)
+//                        currentKey = key2
+//                        setKeywordReviews(currentKey)
+//                    }
+//                }
+//            }
+//            KeywordRadioButton3.setOnClickListener {
+//                setKeywordRadioButton()
+//                if (currentMonth > 0){
+//                    getMonthKeyword(currentMonth){
+//                            result ->
+//                        setKeywords(result)
+//                        setKeywordMonthlyReviews(monthId)
+//                    }
+//                }
+//                else{
+//                    getKeywordById(placeId){
+//                            result ->
+//                        setKeywords(result)
+//                        currentKey = key3
+//                        setKeywordReviews(currentKey)
+//
+//                    }
+//                }
+//            }
         }
     }
 
@@ -567,10 +585,11 @@ class ResultActivity : AppCompatActivity() {
         binding.apply {
             if (!isPurpose) {
                 keywordText.visibility = View.GONE
-                KeywordRadioGroup.visibility = View.GONE
-                KeywordRadioButton1.visibility = View.GONE
-                KeywordRadioButton2.visibility = View.GONE
-                KeywordRadioButton3.visibility = View.GONE
+                rvKeywordlist.visibility = View.GONE
+//                KeywordRadioGroup.visibility = View.GONE
+//                KeywordRadioButton1.visibility = View.GONE
+//                KeywordRadioButton2.visibility = View.GONE
+//                KeywordRadioButton3.visibility = View.GONE
 
                 PosText.visibility = View.VISIBLE
                 NegText.visibility = View.VISIBLE
@@ -586,10 +605,11 @@ class ResultActivity : AppCompatActivity() {
             }
             else {
                 keywordText.visibility = View.VISIBLE
-                KeywordRadioGroup.visibility = View.VISIBLE
-                KeywordRadioButton1.visibility = View.VISIBLE
-                KeywordRadioButton2.visibility = View.VISIBLE
-                KeywordRadioButton3.visibility = View.VISIBLE
+                rvKeywordlist.visibility = View.VISIBLE
+//                KeywordRadioGroup.visibility = View.VISIBLE
+//                KeywordRadioButton1.visibility = View.VISIBLE
+//                KeywordRadioButton2.visibility = View.VISIBLE
+//                KeywordRadioButton3.visibility = View.VISIBLE
 
                 PosText.visibility = View.GONE
                 NegText.visibility = View.GONE
@@ -607,6 +627,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun setKeywords(keywordResult: PlaceKeywordResponse){
+        Log.d("keywordResu;t", keywordResult.toString())
         binding.apply {
             keywordList.clear()
             keywordArray.clear()
@@ -635,68 +656,122 @@ class ResultActivity : AppCompatActivity() {
                 Log.d("keyword", key + " " + value)
             }
 
-            keywordArray.sort()
-
-            for((key, value) in keywordList){
-                if(keywordArray.max() == value) {
-                    key1 = key
-                    KeywordRadioButton1.text = key + " " + keywordArray.max()
-                    keywordArray.remove(value)
-                    keywordList.remove(key)
-                    break
+            keywordDataList = keywords.entries
+                .sortedByDescending { it.value }
+                .filter { it.value != 0 } // 값이 0이 아닌 엔트리만 필터링
+                .map { entry ->
+                    KeywordData(entry.key, + entry.value)
                 }
+                .toMutableList()
+
+            var buttonDataList = keywordDataList.map { entry ->
+                entry.name + " (" +entry.count + ")"
             }
 
-            for((key, value) in keywordList){
-                if(keywordArray.max() == value) {
-                    key2 = key
-                    KeywordRadioButton2.text = key + " " + keywordArray.max()
-                    keywordArray.remove(value)
-                    keywordList.remove(key)
-                    break
-                }
+            keywordAdapter = ButtonAdapter(buttonDataList)
+
+            binding.rvKeywordlist.adapter = keywordAdapter
+
+            var previousSelectedIndex = 0
+            var selectedButtonIndex = 0
+
+            if (buttonDataList.isNotEmpty()) {
+                Log.d("button",buttonDataList.size.toString())
+                keywordAdapter.toggleItemSelection(selectedButtonIndex)
+                keywordAdapter.setOnItemClickListener(object : ButtonAdapter.OnItemClickListener {
+                    override fun onItemClick(item: String, position: Int) {
+                        Log.d("setKeywordItemListener", "hi")
+                        currentKey = keywordDataList[position].name
+                        previousSelectedIndex = selectedButtonIndex
+
+                        // 클릭한 버튼이 이전에 선택한 버튼과 다르다면
+                        if (selectedButtonIndex != position) {
+                            // 이전에 선택한 버튼의 상태 초기화
+                            if (previousSelectedIndex != -1) {
+                                keywordAdapter.toggleItemSelection(previousSelectedIndex)
+                            }
+
+                            // 현재 선택한 버튼의 인덱스 업데이트
+                            selectedButtonIndex = position
+
+                            keywordAdapter.toggleItemSelection(position)
+                        }
+                        if(currentMonth > 0)
+                            setKeywordMonthlyReviews(monthId)
+                        else
+                            setKeywordReviews(currentKey)
+                    }
+                })
+                currentKey = keywordDataList[0].name
+                if (currentMonth > 0)
+                    setKeywordMonthlyReviews(monthId)
+                else
+                    setKeywordReviews(currentKey)
             }
 
-            for((key, value) in keywordList){
-                if(keywordArray.max() == value) {
-                    key3 = key
-                    KeywordRadioButton3.text = key + " " + keywordArray.max()
-                    keywordArray.remove(value)
-                    keywordList.remove(key)
-                    break
-                }
-            }
+            keywordAdapter.notifyDataSetChanged()
+
+//            for((key, value) in keywordList){
+//                if(keywordArray.max() == value) {
+//                    key1 = key
+//                    KeywordRadioButton1.text = key + " " + keywordArray.max()
+//                    keywordArray.remove(value)
+//                    keywordList.remove(key)
+//                    break
+//                }
+//            }
+//
+//            for((key, value) in keywordList){
+//                if(keywordArray.max() == value) {
+//                    key2 = key
+//                    KeywordRadioButton2.text = key + " " + keywordArray.max()
+//                    keywordArray.remove(value)
+//                    keywordList.remove(key)
+//                    break
+//                }
+//            }
+//
+//            for((key, value) in keywordList){
+//                if(keywordArray.max() == value) {
+//                    key3 = key
+//                    KeywordRadioButton3.text = key + " " + keywordArray.max()
+//                    keywordArray.remove(value)
+//                    keywordList.remove(key)
+//                    break
+//                }
+//            }
         }
     }
 
-    private fun setKeywordRadioButton(){
-        binding.apply {
-            when(KeywordRadioGroup.checkedRadioButtonId){
-                R.id.KeywordRadioButton1 -> {
-                    currentKey = key1
-                    if(currentMonth > 0)
-                        setKeywordMonthlyReviews(monthId)
-                    else
-                        setKeywordReviews(currentKey)
-                }
-                R.id.KeywordRadioButton2 -> {
-                    currentKey = key2
-                    if(currentMonth > 0)
-                        setKeywordMonthlyReviews(monthId)
-                    else
-                        setKeywordReviews(currentKey)
+//    private fun setKeywordRadioButton(){
+//        binding.apply {
+//            when(KeywordRadioGroup.checkedRadioButtonId){
+//                R.id.KeywordRadioButton1 -> {
+//                    currentKey = key1
+//                    if(currentMonth > 0)
+//                        setKeywordMonthlyReviews(monthId)
+//                    else
+//                        setKeywordReviews(currentKey)
+//                }
+//                R.id.KeywordRadioButton2 -> {
+//                    currentKey = key2
+//                    if(currentMonth > 0)
+//                        setKeywordMonthlyReviews(monthId)
+//                    else
+//                        setKeywordReviews(currentKey)
+//
+//                }
+//                R.id.KeywordRadioButton3 -> {
+//                    currentKey = key3
+//                    if(currentMonth > 0)
+//                        setKeywordMonthlyReviews(monthId)
+//                    else
+//                        setKeywordReviews(currentKey)
+//                }
+//            }
+//        }
+//    }
 
-                }
-                R.id.KeywordRadioButton3 -> {
-                    currentKey = key3
-                    if(currentMonth > 0)
-                        setKeywordMonthlyReviews(monthId)
-                    else
-                        setKeywordReviews(currentKey)
-                }
-            }
-        }
-    }
 
     private fun setRadioButton(result: List<SAPlaceResponse>){
         binding.apply {
@@ -898,7 +973,7 @@ class ResultActivity : AppCompatActivity() {
                                     getKeywordById(placeId) {
                                             keyResult ->
                                         setKeywords(keyResult)
-                                        setKeywordRadioButton()
+                                        //setKeywordRadioButton()
                                         setKeywordReviews(currentKey)
                                     }
                                 }
@@ -920,7 +995,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(1){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -942,7 +1017,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(2){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -963,7 +1038,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(3){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -984,7 +1059,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(4){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1005,7 +1080,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(5){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1026,7 +1101,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(6){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1047,7 +1122,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(7){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1068,7 +1143,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(8){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1089,7 +1164,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(9){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1110,7 +1185,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(10){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1131,7 +1206,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(11){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
@@ -1152,7 +1227,7 @@ class ResultActivity : AppCompatActivity() {
                                 getMonthKeyword(12){
                                         keyResult ->
                                     setKeywords(keyResult)
-                                    setKeywordRadioButton()
+                                    //setKeywordRadioButton()
                                     setKeywordMonthlyReviews(monthId)
                                 }
                             }
