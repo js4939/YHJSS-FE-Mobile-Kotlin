@@ -56,7 +56,6 @@ class ResultActivity : AppCompatActivity() {
     var key3 = ""
     var currentKey = ""
 
-    val datas = ArrayList<ReviewResponse>()
     val reviewDatas = ArrayList<ReviewData>()
 
     var keywordList = HashMap<String, Int>()
@@ -342,22 +341,22 @@ class ResultActivity : AppCompatActivity() {
         placeId = intent.getLongExtra("placeId", 0)
 
         getPlaceById(placeId) {
-            result ->
-                // map activity로 정보 전달
-                mIntent = Intent(this@ResultActivity, MapActivity::class.java)
-                mIntent.putExtra("name", result.name)
-                mIntent.putExtra("lat", result.latitude)
-                mIntent.putExtra("long", result.longitude)
-                mIntent.putExtra("placeId", result.id)
+                result ->
+            // map activity로 정보 전달
+            mIntent = Intent(this@ResultActivity, MapActivity::class.java)
+            mIntent.putExtra("name", result.name)
+            mIntent.putExtra("lat", result.latitude)
+            mIntent.putExtra("long", result.longitude)
+            mIntent.putExtra("placeId", result.id)
 
-                // 클릭한 장소 정보로 화면 설정
-                binding.placeName.text = result.name
-                binding.placeLocation.text = result.address
-                setPlaceImg(result.photoUrl)
+            // 클릭한 장소 정보로 화면 설정
+            binding.placeName.text = result.name
+            binding.placeLocation.text = result.address?.substring(5, result.address.length)
+            setPlaceImg(result.photoUrl)
         }
 
         getPlaceSAResult(placeId) {
-            result ->
+                result ->
             saPlaceId = result[0].samonthlysummary_id
             Log.d("SA Result", result.toString())
 
@@ -371,7 +370,7 @@ class ResultActivity : AppCompatActivity() {
         }
 
         getKeywordById(placeId){
-            result ->
+                result ->
             keywordId = result.samonthlykeyword_id
             setKeywords(result)
         }
@@ -443,14 +442,14 @@ class ResultActivity : AppCompatActivity() {
                 setKeywordRadioButton()
                 if (currentMonth > 0){
                     getMonthKeyword(currentMonth){
-                        result ->
+                            result ->
                         setKeywords(result)
                         setKeywordMonthlyReviews(monthId)
                     }
                 }
                 else{
                     getKeywordById(placeId){
-                        result ->
+                            result ->
                         setKeywords(result)
                         currentKey = key1
                         setKeywordReviews(currentKey)
@@ -553,7 +552,7 @@ class ResultActivity : AppCompatActivity() {
 
     private fun setKeywordReviews(keyword: String){
         getPlaceKeywordReviews(keyword) {
-            result ->
+                result ->
             initKeywordReview(result)
         }
     }
@@ -847,7 +846,7 @@ class ResultActivity : AppCompatActivity() {
                     if(category != "keyword" && monthId == -1.toLong()){
                         category = "keyword"
                         getKeywordById(placeId) {
-                            keyResult ->
+                                keyResult ->
                             setKeywords(keyResult)
                             setKeywordReviews(currentKey)
                         }
@@ -855,7 +854,7 @@ class ResultActivity : AppCompatActivity() {
                     else if(monthId != -1.toLong()){
                         category = "keyword"
                         getMonthKeyword(currentMonth) {
-                            keyResult ->
+                                keyResult ->
                             setKeywords(keyResult)
                             setKeywordMonthlyReviews(monthId)
                         }
