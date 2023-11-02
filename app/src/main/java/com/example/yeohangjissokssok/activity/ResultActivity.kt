@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.Console
 import java.security.MessageDigest
 import java.util.Collections.max
 import kotlin.math.round
@@ -346,6 +347,9 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
+        setVisibility(false)
+        var tempList = arrayListOf<String>()
+        keywordAdapter = ButtonAdapter(tempList)
         placeId = intent.getLongExtra("placeId", 0)
 
         getPlaceById(placeId) {
@@ -623,6 +627,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun setKeywords(keywordResult: PlaceKeywordResponse){
+        Log.d("keywordResu;t", keywordResult.toString())
         binding.apply {
             keywordList.clear()
             keywordArray.clear()
@@ -668,37 +673,42 @@ class ResultActivity : AppCompatActivity() {
             binding.rvKeywordlist.adapter = keywordAdapter
 
             var previousSelectedIndex = 0
-            keywordAdapter.toggleItemSelection(selectedButtonIndex)
-            keywordAdapter.setOnItemClickListener(object : ButtonAdapter.OnItemClickListener {
-                override fun onItemClick(item: String, position: Int) {
-                    Log.d("setKeywordItemListener", "hi")
-                    currentKey = keywordDataList[position].name
-                    previousSelectedIndex = selectedButtonIndex
+            var selectedButtonIndex = 0
 
-                    // 클릭한 버튼이 이전에 선택한 버튼과 다르다면
-                    if (selectedButtonIndex != position) {
-                        // 이전에 선택한 버튼의 상태 초기화
-                        if (previousSelectedIndex != -1) {
-                            keywordAdapter.toggleItemSelection(previousSelectedIndex)
+            if (buttonDataList.isNotEmpty()) {
+                Log.d("button",buttonDataList.size.toString())
+                keywordAdapter.toggleItemSelection(selectedButtonIndex)
+                keywordAdapter.setOnItemClickListener(object : ButtonAdapter.OnItemClickListener {
+                    override fun onItemClick(item: String, position: Int) {
+                        Log.d("setKeywordItemListener", "hi")
+                        currentKey = keywordDataList[position].name
+                        previousSelectedIndex = selectedButtonIndex
+
+                        // 클릭한 버튼이 이전에 선택한 버튼과 다르다면
+                        if (selectedButtonIndex != position) {
+                            // 이전에 선택한 버튼의 상태 초기화
+                            if (previousSelectedIndex != -1) {
+                                keywordAdapter.toggleItemSelection(previousSelectedIndex)
+                            }
+
+                            // 현재 선택한 버튼의 인덱스 업데이트
+                            selectedButtonIndex = position
+
+                            keywordAdapter.toggleItemSelection(position)
                         }
-
-                        // 현재 선택한 버튼의 인덱스 업데이트
-                        selectedButtonIndex = position
-
-                        keywordAdapter.toggleItemSelection(position)
+                        if(currentMonth > 0)
+                            setKeywordMonthlyReviews(monthId)
+                        else
+                            setKeywordReviews(currentKey)
                     }
-                    if(currentMonth > 0)
-                        setKeywordMonthlyReviews(monthId)
-                    else
-                        setKeywordReviews(currentKey)
-                }
-            })
+                })
+                currentKey = keywordDataList[0].name
+                if (currentMonth > 0)
+                    setKeywordMonthlyReviews(monthId)
+                else
+                    setKeywordReviews(currentKey)
+            }
 
-            currentKey = keywordDataList[0].name
-            if(currentMonth > 0)
-                setKeywordMonthlyReviews(monthId)
-            else
-                setKeywordReviews(currentKey)
             keywordAdapter.notifyDataSetChanged()
 
 //            for((key, value) in keywordList){
