@@ -627,7 +627,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun setKeywords(keywordResult: PlaceKeywordResponse){
-        Log.d("keywordResu;t", keywordResult.toString())
+        //Log.d("keywordResu;t", keywordResult.toString())
         binding.apply {
             keywordList.clear()
             keywordArray.clear()
@@ -653,7 +653,7 @@ class ResultActivity : AppCompatActivity() {
             var keywords = keywordList.toList().sortedByDescending { it.second }.toMap().toMutableMap()
             for((key, value) in keywords){
                 keywordArray.add(value)
-                Log.d("keyword", key + " " + value)
+                //Log.d("keyword", key + " " + value)
             }
 
             keywordDataList = keywords.entries
@@ -676,11 +676,11 @@ class ResultActivity : AppCompatActivity() {
             var selectedButtonIndex = 0
 
             if (buttonDataList.isNotEmpty()) {
-                Log.d("button",buttonDataList.size.toString())
+                //Log.d("button",buttonDataList.size.toString())
                 keywordAdapter.toggleItemSelection(selectedButtonIndex)
                 keywordAdapter.setOnItemClickListener(object : ButtonAdapter.OnItemClickListener {
                     override fun onItemClick(item: String, position: Int) {
-                        Log.d("setKeywordItemListener", "hi")
+                        //Log.d("setKeywordItemListener", "hi")
                         currentKey = keywordDataList[position].name
                         previousSelectedIndex = selectedButtonIndex
 
