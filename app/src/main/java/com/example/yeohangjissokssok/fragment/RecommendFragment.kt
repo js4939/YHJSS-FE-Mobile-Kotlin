@@ -39,10 +39,9 @@ class RecommendFragment : Fragment() {
     val datas = ArrayList<PlaceData>()
     var placeAdapter = PlaceAdapter(datas)
 
+    var category = "C001"
     var categorynum = 0
     var currentKeyword = ""
-
-    var keywordList = HashMap<String, Int>()
 
     val name = "name"
 
@@ -226,9 +225,8 @@ class RecommendFragment : Fragment() {
         var isPurposeButtonClicked = false
 
         // 초기 카테고리 설정 (예: "C001")
-        val initialCategory = "C001"
         categorynum = 0
-        updateRecyclerView(initialCategory)
+        getSACategoryPlace(category)
 
         // 리사이클러뷰 구분선 지정
         val dividerItemDecoration =
@@ -254,9 +252,9 @@ class RecommendFragment : Fragment() {
 
             // 클릭 이벤트 핸들러 내에서 getSACategoryPlace를 호출하지 않고
             // 해당 카테고리를 저장하고, 아래에서 한 번에 호출하도록 변경
-            val category = "C001"
+            category = "C001"
             categorynum = 0
-            updateRecyclerView(category)
+            getSACategoryPlace(category)
         }
 
         btnTransport.setOnClickListener {
@@ -274,9 +272,9 @@ class RecommendFragment : Fragment() {
             btnInfra.setImageResource(R.drawable.ic_infra)
             btnPurpose.setImageResource(R.drawable.ic_purpose)
 
-            val category = "C002"
+            category = "C002"
             categorynum = 1
-            updateRecyclerView(category)
+            getSACategoryPlace(category)
         }
 
         btnCongestion.setOnClickListener {
@@ -294,9 +292,9 @@ class RecommendFragment : Fragment() {
             btnInfra.setImageResource(R.drawable.ic_infra)
             btnPurpose.setImageResource(R.drawable.ic_purpose)
 
-            val category = "C003"
+            category = "C003"
             categorynum = 2
-            updateRecyclerView(category)
+            getSACategoryPlace(category)
         }
 
         btnInfra.setOnClickListener {
@@ -314,9 +312,9 @@ class RecommendFragment : Fragment() {
             btnCongestion.setImageResource(R.drawable.ic_congestion)
             btnPurpose.setImageResource(R.drawable.ic_purpose)
 
-            val category = "C004"
+            category = "C004"
             categorynum = 3
-            updateRecyclerView(category)
+            getSACategoryPlace(category)
         }
 
         btnPurpose.setOnClickListener {
@@ -414,14 +412,14 @@ class RecommendFragment : Fragment() {
                                 setKeyword(result)
                             }
                             2 -> getPlaceByKeyword("꽃"){
-                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
-                            currentKeyword = "꽃"
-                            setKeyword(result)
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "꽃"
+                                setKeyword(result)
                             }
                             3 -> getPlaceByKeyword("나들이"){
-                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
-                            currentKeyword = "나들이"
-                            setKeyword(result)
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "나들이"
+                                setKeyword(result)
                             }
                             4 -> getPlaceByKeyword("등산"){
                                     result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
@@ -479,9 +477,9 @@ class RecommendFragment : Fragment() {
                                 setKeyword(result)
                             }
                             15 -> getPlaceByKeyword("홀로"){
-                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
-                            currentKeyword = "홀로"
-                            setKeyword(result)
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "홀로"
+                                setKeyword(result)
                             }
                             16 -> getPlaceByKeyword("힐링"){
                                     result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
@@ -518,16 +516,11 @@ class RecommendFragment : Fragment() {
                 keywordNum = result[idx].keywordCount
             )
 
-                datas.add(newPlaceResponse)
-                placeAdapter.notifyItemInserted(datas.size - 1)
+            datas.add(newPlaceResponse)
+            placeAdapter.notifyItemInserted(datas.size - 1)
 
-               idx++ // 다음 장소를 가져오기 위해 인덱스 증가
+            idx++ // 다음 장소를 가져오기 위해 인덱스 증가
         }
-    }
-
-    private fun updateRecyclerView(category: String) {
-        // 서버와 통신하여 리사이클러뷰 데이터 업데이트
-        getSACategoryPlace(category)
     }
 
     private fun initRecycler(input: String) {
@@ -536,46 +529,58 @@ class RecommendFragment : Fragment() {
         // placeAdapter 초기화
         binding.rvRecommendlist.adapter = placeAdapter
 
-        val totalPlaceIds = caPlaceIds.size
-        val categoryNum: Int = when (input) {
-            "C001" -> 0
-            "C002" -> 1
-            "C003" -> 2
-            "C004" -> 3
-            else -> 0
-        }
+        val totalPlaceIds = caPlaceIds.toList()
 
-        for (currentIndex in 0 until totalPlaceIds) {
-            val placeId = caPlaceIds[currentIndex]
+        var currentIndex = 0
+        var itc = -1
 
-            // 데이터 가져오기
-            getPlaceSAResult(placeId) { result ->
-                val totalnum =
-                    result[categoryNum].positive + result[categoryNum].negative + result[categoryNum].neutral
+        fun addNextPlace() {
+            if (currentIndex < totalPlaceIds.size) {
+                val placeId = totalPlaceIds[currentIndex]
 
-                // 장소 정보 가져오기
-                getPlaceById(placeId) { placeResult ->
-                    val newPlaceResponse = PlaceData(
-                        id = placeResult.id,
-                        name = placeResult.name,
-                        region = placeResult.region,
-                        address = placeResult.address,
-                        photoUrl = placeResult.photoUrl,
-                        pos = result[categoryNum].positive.toDouble() / totalnum * 100,
-                        totalNum = totalnum
-                    )
+                when (input) {
+                    "C001" -> itc = 0
+                    "C002" -> itc = 1
+                    "C003" -> itc = 2
+                    "C004" -> itc = 3
+                }
 
-                    datas.add(newPlaceResponse)
-                    placeAdapter.notifyItemInserted(datas.size - 1)
+                if(categorynum != itc){
+                    return
+                }
 
-//                    if (currentIndex == totalPlaceIds - 1) {
-//
-//                    }
+                // 데이터 가져오기
+                getPlaceSAResult(placeId) { result ->
+
+                    var totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
+
+                    // 장소 정보 가져오기
+                    getPlaceById(placeId) { placeResult ->
+                        val newPlaceResponse = PlaceData(
+                            id = placeResult.id,
+                            name = placeResult.name,
+                            region = placeResult.region,
+                            address = placeResult.address,
+                            photoUrl = placeResult.photoUrl,
+                            pos = result[categorynum].positive.toDouble() / totalnum * 100,
+                            totalNum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
+                        )
+
+                        if(categorynum == itc){
+                            datas.add(newPlaceResponse)
+                            placeAdapter.notifyItemInserted(datas.size - 1)
+                        }
+
+                        currentIndex++ // 다음 장소를 가져오기 위해 인덱스 증가
+                        addNextPlace() // 다음 장소를 가져오도록 재귀 호출
+                    }
                 }
             }
         }
-    }
 
+        // 첫 번째 장소를 가져오기 위해 호출
+        addNextPlace()
+    }
 
     private fun initClickEvent() {
         binding.apply {
