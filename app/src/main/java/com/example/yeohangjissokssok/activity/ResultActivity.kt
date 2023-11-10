@@ -794,11 +794,11 @@ class ResultActivity : AppCompatActivity() {
 
                     PosPercent.text = round(pos).toInt().toString() + "%"
                     NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
+                    NeuPercent.text = (100-round(pos)-round(neg)).toInt().toString() + "%"
 
                     PosBar.progress = round(pos).toInt()
                     NegBar.progress = round(neg).toInt()
-                    NeuBar.progress = round(neu).toInt()
+                    NeuBar.progress = (100-round(pos)-round(neg)).toInt()
 
                     // 리뷰 불러오기
                     if(category != "C001" && monthId == -1.toLong()){
@@ -829,11 +829,11 @@ class ResultActivity : AppCompatActivity() {
 
                     PosPercent.text = round(pos).toInt().toString() + "%"
                     NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
+                    NeuPercent.text = (100-round(pos)-round(neg)).toInt().toString() + "%"
 
                     PosBar.progress = round(pos).toInt()
                     NegBar.progress = round(neg).toInt()
-                    NeuBar.progress = round(neu).toInt()
+                    NeuBar.progress = (100-round(pos)-round(neg)).toInt()
 
                     // 리뷰 불러오기
                     if(category != "C002" && monthId == -1.toLong()){
@@ -864,11 +864,11 @@ class ResultActivity : AppCompatActivity() {
 
                     PosPercent.text = round(pos).toInt().toString() + "%"
                     NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
+                    NeuPercent.text = (100-round(pos)-round(neg)).toInt().toString() + "%"
 
                     PosBar.progress = round(pos).toInt()
                     NegBar.progress = round(neg).toInt()
-                    NeuBar.progress = round(neu).toInt()
+                    NeuBar.progress = (100-round(pos)-round(neg)).toInt()
 
                     // 리뷰 불러오기
                     if(category != "C003" && monthId == -1.toLong()){
@@ -899,11 +899,11 @@ class ResultActivity : AppCompatActivity() {
 
                     PosPercent.text = round(pos).toInt().toString() + "%"
                     NegPercent.text = round(neg).toInt().toString() + "%"
-                    NeuPercent.text = round(neu).toInt().toString() + "%"
+                    NeuPercent.text = (100-round(pos)-round(neg)).toInt().toString() + "%"
 
                     PosBar.progress = round(pos).toInt()
                     NegBar.progress = round(neg).toInt()
-                    NeuBar.progress = round(neu).toInt()
+                    NeuBar.progress = (100-round(pos)-round(neg)).toInt()
 
                     // 리뷰 불러오기
                     if(category != "C004" && monthId == -1.toLong()){
