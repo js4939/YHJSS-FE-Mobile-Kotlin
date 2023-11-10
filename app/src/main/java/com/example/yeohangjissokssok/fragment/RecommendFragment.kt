@@ -414,14 +414,14 @@ class RecommendFragment : Fragment() {
                                 setKeyword(result)
                             }
                             2 -> getPlaceByKeyword("꽃"){
-                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
-                            currentKeyword = "꽃"
-                            setKeyword(result)
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "꽃"
+                                setKeyword(result)
                             }
                             3 -> getPlaceByKeyword("나들이"){
-                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
-                            currentKeyword = "나들이"
-                            setKeyword(result)
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "나들이"
+                                setKeyword(result)
                             }
                             4 -> getPlaceByKeyword("등산"){
                                     result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
@@ -479,9 +479,9 @@ class RecommendFragment : Fragment() {
                                 setKeyword(result)
                             }
                             15 -> getPlaceByKeyword("홀로"){
-                                result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
-                            currentKeyword = "홀로"
-                            setKeyword(result)
+                                    result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
+                                currentKeyword = "홀로"
+                                setKeyword(result)
                             }
                             16 -> getPlaceByKeyword("힐링"){
                                     result-> Log.d("keyPlaceIds", keyPlaceIds.toString())
@@ -518,10 +518,10 @@ class RecommendFragment : Fragment() {
                 keywordNum = result[idx].keywordCount
             )
 
-                datas.add(newPlaceResponse)
-                placeAdapter.notifyItemInserted(datas.size - 1)
+            datas.add(newPlaceResponse)
+            placeAdapter.notifyItemInserted(datas.size - 1)
 
-               idx++ // 다음 장소를 가져오기 위해 인덱스 증가
+            idx++ // 다음 장소를 가져오기 위해 인덱스 증가
         }
     }
 
@@ -536,46 +536,54 @@ class RecommendFragment : Fragment() {
         // placeAdapter 초기화
         binding.rvRecommendlist.adapter = placeAdapter
 
-        val totalPlaceIds = caPlaceIds.size
-        val categoryNum: Int = when (input) {
-            "C001" -> 0
-            "C002" -> 1
-            "C003" -> 2
-            "C004" -> 3
-            else -> 0
-        }
+        var currentIndex = 0
 
-        for (currentIndex in 0 until totalPlaceIds) {
-            val placeId = caPlaceIds[currentIndex]
+        fun addNextPlace() {
+            if (currentIndex < caPlaceIds.size) {
+                val placeId = caPlaceIds[currentIndex]
 
-            // 데이터 가져오기
-            getPlaceSAResult(placeId) { result ->
-                val totalnum =
-                    result[categoryNum].positive + result[categoryNum].negative + result[categoryNum].neutral
+                // 데이터 가져오기
+                getPlaceSAResult(placeId) { result ->
+                    if (input == "C001"){
+                        categorynum = 0
+                    }
+                    else if (input == "C002"){
+                        categorynum = 1
+                    }
+                    else if (input == "C003"){
+                        categorynum = 2
+                    }
+                    else if (input == "C004"){
+                        categorynum = 3
+                    }
 
-                // 장소 정보 가져오기
-                getPlaceById(placeId) { placeResult ->
-                    val newPlaceResponse = PlaceData(
-                        id = placeResult.id,
-                        name = placeResult.name,
-                        region = placeResult.region,
-                        address = placeResult.address,
-                        photoUrl = placeResult.photoUrl,
-                        pos = result[categoryNum].positive.toDouble() / totalnum * 100,
-                        totalNum = totalnum
-                    )
+                    var totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
 
-                    datas.add(newPlaceResponse)
-                    placeAdapter.notifyItemInserted(datas.size - 1)
+                    // 장소 정보 가져오기
+                    getPlaceById(placeId) { placeResult ->
+                        val newPlaceResponse = PlaceData(
+                            id = placeResult.id,
+                            name = placeResult.name,
+                            region = placeResult.region,
+                            address = placeResult.address,
+                            photoUrl = placeResult.photoUrl,
+                            pos = result[categorynum].positive.toDouble() / totalnum * 100,
+                            totalNum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
+                        )
 
-//                    if (currentIndex == totalPlaceIds - 1) {
-//
-//                    }
+                        datas.add(newPlaceResponse)
+                        placeAdapter.notifyItemInserted(datas.size - 1)
+
+                        currentIndex++ // 다음 장소를 가져오기 위해 인덱스 증가
+                        addNextPlace() // 다음 장소를 가져오도록 재귀 호출
+                    }
                 }
             }
         }
-    }
 
+        // 첫 번째 장소를 가져오기 위해 호출
+        addNextPlace()
+    }
 
     private fun initClickEvent() {
         binding.apply {
