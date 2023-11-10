@@ -14,13 +14,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" />
-
-        <ImageView
-            android:id="@+id/goBackBtn"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            app:srcCompat="@drawable/baseline_arrow_back_ios_24" />
     </FrameLayout>
 </LinearLayout>

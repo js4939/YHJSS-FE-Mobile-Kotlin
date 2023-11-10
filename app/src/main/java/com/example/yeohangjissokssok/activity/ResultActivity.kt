@@ -409,31 +409,6 @@ class ResultActivity : AppCompatActivity() {
 
     private fun initClickEvent(result: List<SAPlaceResponse>) {
         binding.apply {
-            goBackBtn.setOnClickListener {
-                // 뒤로가기 버튼 클릭 시 이벤트
-                /* val previousPage = intent.getStringExtra("page") as String
-                Log.d("back", previousPage)
-
-                if (previousPage == "recommend") {
-                    val fragment = RecommendFragment()
-                    val fragmentManager = ResultActivity().supportFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
-
-                    fragmentTransaction.replace(fragment_recommend, RecommendFragment())
-                    fragmentTransaction.addToBackStack(null)
-                    fragmentTransaction.commit()
-                }
-                else if(previousPage == "home") {
-                    val fragment =  HomeFragment()
-                    val fragmentManager = ResultActivity().supportFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
-
-                    fragmentTransaction.replace(fragment_home, HomeFragment())
-                    fragmentTransaction.addToBackStack(null)
-                    fragmentTransaction.commit()
-                }*/
-            }
-
             mapBtn.setOnClickListener {
                 // 지도 버튼 클릭 시 이벤트
                 startActivity(mIntent)
@@ -945,8 +920,6 @@ class ResultActivity : AppCompatActivity() {
         val spinner: Spinner = binding.filterBtn
 
         // 어댑터 적용
-        /*spinner.adapter = ArrayAdapter.createFromResource(this,
-            R.array.monthList, R.layout.row_spinner)*/
         spinner.adapter = ArrayAdapter.createFromResource(this,
             R.array.monthList, android.R.layout.simple_spinner_dropdown_item)
 

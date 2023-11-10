@@ -26,21 +26,6 @@ class MapActivity: AppCompatActivity() {
 
         // 클릭한 여행지로 마커 표시
         setMap()
-
-        // 뒤로가기 클릭 이벤트
-        initClickEvent()
-    }
-
-    private fun initClickEvent() {
-        var id = intent.getLongExtra("placeId", 0)
-        var name = intent.getStringExtra("name")
-
-        binding.goBackBtn.setOnClickListener {
-            intent = Intent(this@MapActivity, ResultActivity::class.java)
-            intent.putExtra("placeId", id)
-            intent.putExtra("name", name)
-            startActivity(intent)
-        }
     }
 
     private fun setMap() {
