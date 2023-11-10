@@ -2,17 +2,13 @@ package com.example.yeohangjissokssok.fragment
 
 import PlaceAdapter
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.example.yeohangjissokssok.R
 import com.example.yeohangjissokssok.activity.APIResponseData
 import com.example.yeohangjissokssok.activity.PlaceResponse
 import com.example.yeohangjissokssok.activity.ResultActivity
@@ -23,13 +19,10 @@ import com.example.yeohangjissokssok.models.SACategoryResponse
 import com.example.yeohangjissokssok.models.SAPlaceResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.security.MessageDigest
 import java.time.LocalDate
 
 class HomeFragment : Fragment() {
@@ -66,7 +59,6 @@ class HomeFragment : Fragment() {
                             .create()
                             .fromJson(jsonResult, Array<SACategoryResponse>::class.java)
                             .toList()
-                        //Log.d("home fragment result", result.toString())
 
                         // 받아온 placeId를 caPlaceIds 리스트에 추가
                         caPlaceIds.clear()
@@ -75,7 +67,7 @@ class HomeFragment : Fragment() {
                         }
 
                         // initRecycler 함수를 호출하여 데이터 추가
-                        initRecycler()
+                        initRecycler(input)
                     }
                 }
 
@@ -99,31 +91,6 @@ class HomeFragment : Fragment() {
                             .create()
                             .fromJson(jsonResult, PlaceResponse::class.java)
                         callback(result) // 데이터를 가져온 후 콜백으로 전달
-                    }
-                }
-
-                override fun onFailure(call: Call<APIResponseData>, t: Throwable) {
-                    Log.d("test", "연결실패")
-                }
-            })
-        }
-    }
-
-    private fun getPlaceSAResult(id: Long, callback: (List<SAPlaceResponse>) -> Unit) {
-        CoroutineScope(Dispatchers.Main).launch {
-            RetrofitBuilder.api.getSAPlace(id).enqueue(object : Callback<APIResponseData> {
-                override fun onResponse(
-                    call: Call<APIResponseData>, response: Response<APIResponseData>
-                ) {
-                    if (response.isSuccessful) {
-                        val temp = response.body() as APIResponseData
-                        val jsonResult = Gson().toJson(temp.data)
-                        val result: List<SAPlaceResponse> = GsonBuilder()
-                            .create()
-                            .fromJson(jsonResult, Array<SAPlaceResponse>::class.java)
-                            .toList()
-                        callback(result) // 데이터를 가져온 후 콜백으로 전달
-                        //Log.d("saresult", result.toString())
                     }
                 }
 
@@ -223,37 +190,34 @@ class HomeFragment : Fragment() {
         return view
     }
 
-/*    private fun updateRecyclerView(category: String) {
-        // 서버와 통신하여 리사이클러뷰 데이터 업데이트
-        getMonthSACategoryPlace(category)
-    }*/
-
-    private fun initRecycler() {
+    private fun initRecycler(input: String) {
         datas.clear() // 데이터 초기화
 
         // placeAdapter 초기화
         binding.rvPlace.adapter = placeAdapter
 
+        val totalPlaceIds = caPlaceIds.toList()
+
         var currentIndex = 0
+        var itc = -1
 
         fun addNextPlace() {
-            if (currentIndex < caPlaceIds.size) {
-                val placeId = caPlaceIds[currentIndex]
+            if (currentIndex < totalPlaceIds.size) {
+                val placeId = totalPlaceIds[currentIndex]
+
+                when (input) {
+                    "C001" -> itc = 0
+                    "C002" -> itc = 1
+                    "C003" -> itc = 2
+                    "C004" -> itc = 3
+                }
+
+                if(categorynum != itc){
+                    return
+                }
 
                 // 데이터 가져오기
                 getPlaceMonthlySAResult(placeId, month) { result ->
-/*                    if (input == "C001"){
-                        categorynum = 0
-                    }
-                    else if (input == "C002"){
-                        categorynum = 1
-                    }
-                    else if (input == "C003"){
-                        categorynum = 2
-                    }
-                    else if (input == "C004"){
-                        categorynum = 3
-                    }*/
 
                     var totalnum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
 
@@ -269,8 +233,10 @@ class HomeFragment : Fragment() {
                             totalNum = result[categorynum].positive + result[categorynum].negative + result[categorynum].neutral
                         )
 
-                        datas.add(newPlaceResponse)
-                        placeAdapter.notifyItemInserted(datas.size - 1)
+                        if(categorynum == itc){
+                            datas.add(newPlaceResponse)
+                            placeAdapter.notifyItemInserted(datas.size - 1)
+                        }
 
                         currentIndex++ // 다음 장소를 가져오기 위해 인덱스 증가
                         addNextPlace() // 다음 장소를 가져오도록 재귀 호출
