@@ -384,7 +384,7 @@ class ResultActivity : AppCompatActivity() {
         getKeywordById(placeId){
                 result ->
             keywordId = result.samonthlykeyword_id
-            setKeywords(result)
+            //setKeywords(result)
         }
 
         adapter = ReviewAdapter(this.reviewDatas)
